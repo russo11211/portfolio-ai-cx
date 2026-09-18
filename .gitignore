@@ -1,0 +1,6 @@
+# configuração pessoal do harness — cada pessoa tem a sua
+.claude/settings.local.json
+
+# artefatos de sessão
+.gstack/
+*.log
