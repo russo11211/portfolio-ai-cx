@@ -1,7 +1,7 @@
 # Plano de Fechamento de Gap — AI Solutions Consultant / Prompt Engineer
 
 **Criado em:** 2026-09-16
-**Status:** Rascunho inicial — cada fase (0 a 4) ainda será refinada individualmente antes da execução. Não seguir como plano final.
+**Status:** Fase 0 concluída (2026-09-16). Fases 1-4 ainda serão refinadas individualmente antes da execução de cada uma. Monorepo do portfólio: [github.com/russo11211/portfolio-ai-cx](https://github.com/russo11211/portfolio-ai-cx).
 **Baseado em:** diagnóstico honesto de prontidão cruzando 15 vagas-alvo (`trilha2_ai_engineer_vagas.md`), inventário real de commits em repositórios git, e consulta ao vault Obsidian.
 
 ## Por que este alvo (e não "Engenheiro de IA Sênior" full-stack)
@@ -31,8 +31,8 @@ Vagas da trilha 2 mais alinhadas a este reposicionamento: Porto (Engenheiro de I
 Cada projeto deve virar um repositório público próprio (não dentro do CLTech), com README bom, e — quando fizer sentido — um case study curto (post de LinkedIn ou artigo) conectando o projeto ao domínio de CX/consultoria. Todo projeto deve mencionar explicitamente o uso de Claude Code no processo de construção (isso é, em si, parte da prova de habilidade visada pelas vagas que citam Claude Code/Copilot).
 
 ### Fase 0 — Higiene (antes de começar, ~1-2 dias)
-- [ ] Reescrever a seção "Formação Complementar" do `CLAUDE.md` para refletir só o que é verificável hoje (fluência Claude Code, disciplina de avaliação determinística) e marcar RAG/API de LLM/MCP como "em construção — ver portfólio".
-- [ ] Criar uma organização/pasta única no GitHub pessoal para os projetos de portfólio de IA (ex: `github.com/<user>/ai-portfolio` como monorepo, ou repos separados — decidir por preferência pessoal).
+- [x] Reescrever a seção "Formação Complementar" do `CLAUDE.md` para refletir só o que é verificável hoje (fluência Claude Code, disciplina de avaliação determinística) e marcar RAG/API de LLM/MCP como "em construção — ver portfólio".
+- [x] Criar uma organização/pasta única no GitHub pessoal para os projetos de portfólio de IA — decidido: monorepo único em [github.com/russo11211/portfolio-ai-cx](https://github.com/russo11211/portfolio-ai-cx), com uma subpasta por projeto (Fase 1: `cx-prompt-lab/`, Fase 2: `portfolio-rag-assistant/`, Fase 3: `contact-center-agent-toolkit/`).
 
 ### Fase 1 — Prompt Engineering + Evals (semanas 1-2)
 **Projeto: "CX Prompt Lab"**
