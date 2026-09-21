@@ -22,7 +22,7 @@ instalados; o que já havia em disco **não** foi alterado.
   `understand-anything:understand`. Ver `ESTEIRAS.md` no skills-hub.
 
 ```bash
-cd /home/caueantonacci/GIT/portfolio-ai-cx
+cd ~/GIT/portfolio-ai-cx
 claude
 ```
 

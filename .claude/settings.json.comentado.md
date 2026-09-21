@@ -57,7 +57,7 @@ metade da esteira vive nela. Não acrescente o id dela aqui.
 
 ---
 
-## `"claudeMdExcludes": ["/home/caueantonacci/.claude/CLAUDE.md"]`
+## `"claudeMdExcludes": ["/home/*/.claude/CLAUDE.md"]`
 
 Impede o CLAUDE.md global do usuário de entrar no contexto deste projeto. `[TESTE]` —
 `gstack=NAO;projeto=SIM`.
@@ -67,7 +67,7 @@ aqui. As que continuam valendo foram **re-declaradas** no `CLAUDE.md` do templat
 regra de navegar sempre por `/browse` e nunca pelas ferramentas `mcp__claude-in-chrome__*`
 é a principal. Se você editar o CLAUDE.md global, releia o do template.
 
-Caminho absoluto, e é da máquina do `caueantonacci`. Em outra máquina, ajuste.
+Caminho absoluto, e é da máquina do `<usuario>`. Em outra máquina, ajuste.
 CLAUDE.md gerenciado por organização **não** pode ser excluído (MECANISMOS §6.7).
 
 ---
