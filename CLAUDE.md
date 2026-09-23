@@ -21,7 +21,7 @@ Este projeto roda na **fábrica agêntica**. Você é o operador da linha de mon
 | 3 | Vocabulário | `/grill-with-docs` | `ideia.md` | `CONTEXT.md` + `docs/adr/` | cada termo repetido tem definição que **exclui** algo |
 | 4 | Spec | `/to-spec` | `ideia.md` + `CONTEXT.md` | spec no tracker (cópia em `docs/spec/<slug>.md`) | um estranho lê e sabe: problema, fora de escopo, como verificar. Zero critério não verificável |
 | 5 | Revisão de plano | `/autoplan` | spec | spec revisada, cortes justificados | alguma coisa foi **cortada** com justificativa escrita |
-| 6 | Tickets | `/to-tickets` | spec revisada | `.scratch/<feature>/issues/NN-slug.md` | cada ticket cabe em 1 PR **e** entrega algo observável (tracer bullet, não camada) |
+| 6 | Tickets | `/to-tickets` | spec revisada | issue no Linear (time Carreira) por ticket | cada ticket cabe em 1 PR **e** entrega algo observável (tracer bullet, não camada) |
 | 7 | Arquitetura | `/codebase-design` | tickets + repo | ADR em `docs/adr/` | as **seams** estão nomeadas; para cada ticket você sabe qual seam ele toca |
 | 8 | Implementação | `/implement` (dirige `/tdd`) | **um** ticket | commit verificado por testes | teste que falhava antes passa; suíte verde; diff só nos arquivos previstos na ADR |
 | 9 | QA | `/qa` | app rodando | bugs corrigidos + `docs/qa/<data>-<slug>.md` | o relatório **nomeia os fluxos percorridos**, e são os do primeiro corte |
@@ -79,8 +79,10 @@ docs/spec/<slug>.md                 E4 (cópia local da spec do tracker)
 docs/adr/NNNN-titulo.md             E3 e E7 — decisões arquiteturais congeladas
 docs/qa/<data>-<slug>.md            E9
 docs/retro/<data>.md                E12
-.scratch/<feature>/issues/NN-slug.md  E6 — tickets (efêmero, versionado mesmo assim)
 .claude/                            configuração do harness deste projeto
+
+Tickets (E6) vivem no Linear (time Carreira), não em arquivo local. Ver
+`docs/agents/issue-tracker.md`.
 ```
 
 Não invente outro lugar. Artefato fora da convenção quebra a rastreabilidade
@@ -116,3 +118,13 @@ ideia → spec → ticket → PR → release.
 | Contexto estourando no meio do estágio | `/context-save` → `/clear` → `/context-restore`. Se o artefato já existe, só `/clear` |
 | Entreguei artefato que não era o pedido | Não corrija por cima. `/clear`, reabra o estágio e refaça a partir do artefato **anterior** |
 | Skill não apareceu | Ela pode não estar instalada ou não estar na allowlist de `.claude/settings.json`. Não improvise substituta — avise o humano |
+
+## Agent skills
+
+### Issue tracker
+
+Tickets vivem no Linear (time **Carreira**), via MCP `plugin:linear:linear`. Ver `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Layout single-context: `CONTEXT.md` + `docs/adr/` na raiz. Ver `docs/agents/domain.md`.
