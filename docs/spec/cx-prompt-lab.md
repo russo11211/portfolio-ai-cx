@@ -20,9 +20,9 @@ O relatório só afirma que o lado Anthropic é **Compatível com Anthropic**. N
 
 1. Como recrutador técnico, quero ver uma tabela v0→vN com Erro de acerto, Alucinação e Violação de formato por versão de prompt, para julgar em minutos se o candidato mede a própria iteração.
 2. Como recrutador técnico, quero ler um case study que explica o que mudou de uma versão para a próxima e por que, para entender o raciocínio e não só o número.
-3. Como recrutador técnico, quero rodar o Replay sem chave e sem Gateway, para conferir que os números da tabela saem das Chamadas gravadas.
+3. Como recrutador técnico ou terceiro que clonou o repositório, quero rodar um único comando de Replay, sem chave e sem Gateway, e ver a tabela, para conferir que os números saem das Chamadas gravadas sem instalar nada além do necessário para o cálculo.
 4. Como recrutador técnico, quero que o README diga exatamente o que cada teste comprova e qual é o comando de Replay, para não ter de adivinhar.
-5. Como recrutador técnico, quero que o relatório declare o limite do Replay (prova o cálculo, não que o modelo responderia igual hoje), para confiar na honestidade do candidato.
+5. Como recrutador técnico, quero que o relatório declare o limite do Replay (prova o cálculo, não que o modelo responderia igual hoje) e distinga Replay de Reexecução, para confiar na honestidade do candidato e não confundir "recalculei" com "o modelo respondeu de novo".
 6. Como recrutador técnico, quero que o relatório nunca diga "validado contra a Anthropic", para não ser induzido a erro sobre o que foi testado.
 7. Como recrutador técnico, quero ver a variação observada entre Repetições, para saber se a queda entre v0 e a versão final é maior que o ruído.
 8. Como recrutador técnico, quero abrir o Dataset e ver casos ambíguos e de intenção dupla com a regra de desempate escrita, para saber que v0 falha por motivo real e não por um problema trivial.
@@ -48,11 +48,8 @@ O relatório só afirma que o lado Anthropic é **Compatível com Anthropic**. N
 28. Como candidato, quero que v1 seja uma melhoria documentada sobre v0, para ter o mínimo aceito (v0→v1) mesmo se a semana estourar.
 29. Como candidato, quero tentar v2 se sobrar tempo, para fortalecer o case study sem invalidar o resultado se ela não sair.
 30. Como candidato, quero um relatório que nomeie a "versão final" como a última versão concluída, para que o critério de sucesso seja inequívoco.
-31. Como candidato, quero que o relatório distinga Replay de Reexecução, para que ninguém confunda "recalculei" com "o modelo respondeu de novo".
-32. Como terceiro que clonou o repositório, quero rodar um único comando de Replay e ver a tabela, para chegar aos mesmos números sem instalar nada além do necessário para o cálculo.
-33. Como terceiro que clonou o repositório, quero saber a margem de variação declarada da Reexecução (em pontos percentuais de taxa), para saber quanto diferença entre Rodadas novas é ruído; o Replay bate exatamente.
-34. Como candidato, quero que o vocabulário do código, dos testes e do relatório siga o glossário do projeto (Rodada, Chamada, Repetição, Rótulo, Intenção…), para não haver sinônimos que confundam o leitor.
-35. Como candidato, quero que o uso do Gateway respeite os termos do provedor, para não depender de um modo de autenticação que os viole.
+31. Como terceiro que clonou o repositório, quero saber a margem de variação declarada da Reexecução (em pontos percentuais de taxa), para saber quanto diferença entre Rodadas novas é ruído; o Replay bate exatamente.
+32. Como candidato, quero que o uso do Gateway respeite os termos do provedor, para não depender de um modo de autenticação que os viole.
 
 ## Implementation Decisions
 
@@ -124,12 +121,31 @@ O relatório só afirma que o lado Anthropic é **Compatível com Anthropic**. N
 
 | ID | Contrato e evidência | Atual | Proposto | Status | Aprovação e escopo |
 |---|---|---|---|---|---|
-| C1 | v2 como alvo (história 29; Implementation Decisions "v2 alvo"; Further Notes) | v2 é alvo | v2 sai da spec, vira TODO; v0→v1 é o único entregável | pendente (humano assina no gate E5) | nenhuma |
-| C2 | Matriz "o que cada teste comprova" aparece no módulo *Relatório* e no README (história 4) | nos dois | só no README | pendente (humano) | nenhuma |
-| C3 | História 34 (vocabulário segue glossário) | é história | sai: não verificável, já é regra do CLAUDE.md/CONTEXT.md | pendente (humano) | nenhuma |
-| C4 | Histórias 3/32 e 5/31 duplicadas | 35 histórias | fundir duplicadas, sem mudar comportamento | pendente (humano) | nenhuma |
+| C1 | v2 como alvo (história 29; Implementation Decisions "v2 alvo"; Further Notes) | v2 é alvo | v2 sai da spec, vira TODO; v0→v1 é o único entregável | RECUSADO pelo humano | v2 permanece como alvo; mínimo aceito continua v1. Motivo: decisão do humano, sem justificativa adicional registrada |
+| C2 | Matriz "o que cada teste comprova" aparece no módulo *Relatório* e no README (história 4) | nos dois | só no README | RECUSADO pelo humano | a matriz permanece no módulo Relatório (e no README). Motivo: decisão do humano, sem justificativa adicional registrada |
+| C3 | História 34 (vocabulário segue glossário) | é história | sai: não verificável, já é regra do CLAUDE.md/CONTEXT.md | ACEITO pelo humano; aplicado | História 34 removida da spec. Justificativa: não há como verificar por teste ou checklist que "o vocabulário segue o glossário"; a regra já vale para o projeto inteiro via CLAUDE.md e CONTEXT.md, então mantê-la como história só duplicava uma regra e deixava um critério não verificável, o que o gate do E4 proíbe |
+| C4 | Histórias 3/32 e 5/31 duplicadas | 35 histórias | fundir duplicadas, sem mudar comportamento | ACEITO pelo humano; aplicado | 3 fundida com 32 e 5 fundida com 31; a spec passa de 35 para 32 histórias (as antigas 33 e 35 viram 31 e 32). Justificativa: 3 e 32 descreviam o mesmo comportamento (rodar um comando de Replay sem chave e sem Gateway e ver a tabela) e 5 e 31 o mesmo (o relatório separa o que o Replay prova do que a Reexecução mostra); duas histórias para um comportamento geravam dois testes/critérios para uma coisa só |
 | A1 | História 2 (case study explica o que mudou) | sem lista de itens que mudaram | Relatório lista as Transcrições cuja classificação mudou entre versões | aprovado (auto-decisão P2, taste) | bloco `autoplan-accepted:ceo` |
 | A2 | Critério "queda mensurável" sem regra de decisão (Further Notes; linha "inconclusiva" em Implementation Decisions) | ambíguo | queda só conta se maior que a variação observada entre Repetições | aprovado (auto-decisão P1, taste; deriva do texto existente) | bloco `autoplan-accepted:ceo` |
-| Q1 | Efeito piso: se v0 quase não alucina, não há queda a medir. A spec não diz o que fazer | sem resposta | decisão humana: definir o que vale como sucesso nesse caso | pendente (User Challenge candidato, vai ao gate) | nenhuma |
+| Q1 | Efeito piso: se v0 quase não alucina, não há queda a medir. A spec não diz o que fazer | sem resposta | decisão humana: definir o que vale como sucesso nesse caso | ABERTA: o humano decide no gate final | nenhuma |
 
 <!-- autoplan-baseline-edits:ceo {"sourceSha256":"a6c0a7da494367d4b524825663d62aa6592204b945f946b7c2b5e6665bd21ee9","replacements":[{"oldText":"tabela por versão, variação entre Repetições, case study e a matriz \"o que cada teste comprova\".","newText":"tabela por versão, variação entre Repetições, comparação queda vs variação, lista de Transcrições que mudaram, case study e a matriz \"o que cada teste comprova\"."},{"oldText":"A quantidade exata de Repetições é decidida no E5/E7 com base no que a Reexecução mostrar sobre a variância. Se as Repetições mostrarem variação comparável à queda entre versões, a conclusão é declarada como inconclusiva e o Dataset ou as Repetições aumentam (premissa 2 da ideia).","newText":"O piso é 3 Repetições por versão (configurável; 3 é o padrão, porque com 2 a amplitude é frágil e a Reexecução no Gateway é gratuita). Se a queda não for maior que a variação, a conclusão é declarada inconclusiva e o Dataset ou as Repetições aumentam (premissa 2 da ideia)."},{"oldText":"dentro da margem de variação declarada.","newText":"e os números batem exatamente (o Replay é determinístico). A margem de variação declarada aplica-se apenas à Reexecução."},{"oldText":"quero saber a margem de variação declarada, para saber quanto diferença entre números é ruído.","newText":"quero saber a margem de variação declarada da Reexecução (em pontos percentuais de taxa), para saber quanto diferença entre Rodadas novas é ruído; o Replay bate exatamente."},{"oldText":"Interface web para rodar o eval e CI automatizado (ideia futura separada, CAR-6).","newText":"Interface web para rodar o eval e CI automatizado do eval (o CI do repositório exigido no /ship não é afetado) (ideia futura separada, CAR-6)."},{"oldText":"12. Prometer piso numérico de melhora antes do experimento rodar.","newText":"12. Prometer piso numérico de melhora antes do experimento rodar.\n13. Intervalos de confiança/bootstrap nas taxas (adiado para depois do primeiro corte).\n14. Matriz de confusão por Rótulo (adiado para depois do primeiro corte).\n15. Página HTML estática do relatório (pertence à ideia futura CAR-6)."}]} -->
+
+### Adições feitas por auto-decisão do /autoplan, sem aval prévio do humano (aprovar ou recusar cada uma no gate)
+
+Nenhuma foi revertida. Todas já estão no texto da spec (seções indicadas). Status de todas: PENDENTE DE APROVAÇÃO.
+
+| # | Adição | Onde está na spec |
+|---|---|---|
+| 1 | **A1:** o Relatório lista as Transcrições cujo Rótulo mudou entre versões consecutivas, comparando a Repetição de índice 1 de cada uma; resposta sem Rótulo válido é o estado "sem rótulo válido" | módulo Relatório (Implementation Decisions); bullet "Lista de Transcrições que mudaram" no fim de Further Notes |
+| 2 | **A2:** regra de decisão da queda: queda = média das taxas de Alucinação total de v0 menos a média da versão final, em pontos percentuais; variação = max das amplitudes entre Repetições de v0 e da versão final; "mensurável" só se a queda for estritamente maior que a variação, senão inconclusivo (inclui variação e queda zero) | bullet "Regra de decisão da queda" no fim de Further Notes; parágrafo Repetições em Implementation Decisions |
+| 3 | **P6:** piso de 3 Repetições por versão (configurável), no lugar de "decidida no E5/E7" | parágrafo Repetições em Implementation Decisions; bullet "Piso de 3 Repetições" |
+| 4 | **Tabela de contagem a–f** por resposta (denominador = todas as Transcrições; regra de normalização da Justificativa ancorada; Violação de formato conta só nela mesma, nem Erro de acerto nem Alucinação) e um teste da Rodada por linha | bullet "Tabela de contagem por resposta" no fim de Further Notes |
+| 5 | **Política de falha do provider:** erro do provider não vira Chamada; a Rodada aborta com mensagem e não fica completa; o Replay recusa Rodada com Chamadas faltando, corrompidas ou fora do Dataset | bullet "Falhas" no fim de Further Notes |
+| 6 | **Campos novos da Chamada:** índice da Repetição, identificador da Rodada, modelo e parâmetros de geração (temperature, max_tokens) | bullet "Cada Chamada gravada registra também..." no fim de Further Notes |
+| 7 | **Itens 13 a 15 do Fora de escopo:** bootstrap/intervalos de confiança, matriz de confusão por Rótulo, página HTML estática | seção Out of Scope, itens 13-15 |
+| 8 | Teste do texto do Relatório: contém o limite do Replay e nunca contém "validado contra a Anthropic" | bullet "Honestidade do relatório" no fim de Further Notes |
+| 9 | Esclarecimentos de texto: margem de variação vale só para a Reexecução (Replay bate exatamente), no critério de sucesso e na história 31 (antiga 33); item 6 do Fora de escopo esclarece que o CI do repositório no /ship não é afetado; módulo Relatório passa a listar comparação queda vs variação e a lista de mudanças | Further Notes (Critério de sucesso), User Stories, Out of Scope item 6, módulo Relatório |
+
+Observação: os bullets "no fim de Further Notes" formam o registro de obrigações aceitas (bloco `autoplan-accepted:ceo`) e estão duplicados no texto onde a spec original já dizia algo parecido; a remoção de qualquer item recusado deve apagar as duas ocorrências.
+
