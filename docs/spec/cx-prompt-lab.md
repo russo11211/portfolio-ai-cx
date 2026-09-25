@@ -777,3 +777,109 @@ Adiados sem arquivo próprio (`TODOS.md` não criado): a lista acima e o CEO pla
 - Encerramento sem reabrir DX/Eng por decisão do humano em 2026-09-25. O protocolo do /autoplan pede Eng depois de qualquer rerun do CEO; esta rodada não roda Eng nem novas vozes do CEO, por decisão do humano.
 - Vozes da rodada 4: N/A, dispensadas pelo humano em 2026-09-25 (sem novo revisor nativo nem Codex sobre a spec desta rodada; as vozes do ciclo 3 rodaram sobre a versão anterior).
 - Linear/CAR-8 não foi tocado. O E6 não começou.
+
+## Cobertura e fechamento (E6)
+
+Tickets publicados no Linear (time Carreira) em 2026-09-25, como sub-issues de CAR-8, com relações de bloqueio nativas. Matriz aprovada pelo humano em 2026-09-25. A numeração das histórias é a desta spec (1–32); a história 34 antiga foi cortada de forma intencional (C3, "ACEITO pelo humano; aplicado") e não volta.
+
+### Matriz de cobertura: histórias
+
+| História | Destino | Nota |
+|---|---|---|
+| 1 | T9 | Tabela por versão. |
+| 2 | T12 | Case study. |
+| 3 | T9 | Comando único de Replay imprime a tabela; o T3 fornece o recálculo. |
+| 4 | T12 | README com a matriz "o que cada teste comprova". |
+| 5 | T9, T12 | Limite do Replay e distinção Replay × Reexecução no Relatório (T9); repetidos no case study e no README (T12). |
+| 6 | T12 | Teste de honestidade sobre os 3 textos. |
+| 7 | T9, T10 | T9 mostra cada Repetição; T10 dá a conclusão. |
+| 8 | T7 | |
+| 9 | T7 | |
+| 10 | T7, T2 | Lista fechada (T7); o T2 a usa para "rótulo inexistente". |
+| 11 | T2 | |
+| 12 | T2 | |
+| 13 | T2 | |
+| 14 | T2 | |
+| 15 | T2 | |
+| 16 | T2 | |
+| 17 | T2 | |
+| 18 | T2, T11 | Rodada (T2); experimento e execução real (T11). |
+| 19 | T2, T4 | Repetição (T2); mínimo de 3 (T4). |
+| 20 | T3 | |
+| 21 | T3 | |
+| 22 | T5 | Execução real no T11. |
+| 23 | T5 | |
+| 24 | T6 | |
+| 25 | T6 | |
+| 26 | T1 | |
+| 27 | T8 | |
+| 28 | T11 | |
+| 29 | T13 | Opcional. |
+| 30 | T10 | Versão final = última concluída. |
+| 31 | T14 | Margem da Reexecução, descritiva. |
+| 32 | T1 | Termos de uso. |
+
+### Matriz de cobertura: Testing Decisions
+
+| Item | Destino |
+|---|---|
+| Bom teste (por fora, nomeia a métrica) | T2 cria o padrão; T12 monta a matriz do README |
+| Seam testada, provider falso | T2 |
+| Replay | T3 |
+| Integração local com o Gateway (opt-in) | T5 |
+| Teste Anthropic real, suíte offline, montagem do pedido | T6 |
+| Dataset (validação) | T7 |
+| Prior art: nenhum | Sem ticket: informativo, o padrão nasce no T2 |
+
+### Matriz de cobertura: blocos `autoplan-accepted` (17)
+
+| Bloco | Destino |
+|---|---|
+| Lista de Transcrições que mudaram | T10 |
+| Regra de melhora | T10 |
+| Critério de sucesso e conclusão ("exploratório") | T10 |
+| Campos da Chamada gravada, sem credenciais | T3 |
+| Mínimo de 3 Repetições | T4 |
+| Manifesto e integridade | T3 |
+| Tabela de contagem (a)–(f) | T2 |
+| Falhas e Rodada parcial | T4 (aborto, timeout, progresso, mensagem); T3 (recusas do Replay) |
+| Plano B do spike | T1 |
+| Testes offline e opt-in | T6 (T5 no opt-in do Gateway) |
+| Validação do Dataset | T7 |
+| Honestidade do relatório | T12 (teste sobre os 3 arquivos); T9 gera o texto |
+| Modelo, data e memo | T9 (modelo e data); T12 (memo) |
+| Contrato explícito em v0 e piloto | T8 |
+| Relatório com todas as Rodadas | T9 (listagem, "fora do experimento"); T10 (veredito só do experimento) |
+| Motivo de parada normalizado | T6 (dono do teste de contrato); mapeamento no T5 e no T6 |
+| Edições de baseline aplicadas | Sem ticket: resumo de edições, cada uma coberta pelas linhas acima |
+
+Nenhuma linha ficou sem destino. As exigências da ADR do E7 (quickstart, CLI, códigos de saída, armazenamento, valor do timeout, Plano B nomeado) não são da spec e não entram na matriz: alimentam o E7.
+
+### Donos de critérios que atravessam tickets
+
+- Resultado normalizado idêntico entre os providers Gateway (CLIProxyAPI local) e Anthropic sobre o mesmo transporte falso: **T6**. O T5 só o cita.
+- "Nenhuma Transcrição do Dataset aparece nos exemplos dos prompts": teste da suíte no **T7**. T8, T11 e T13 só exigem que esse teste esteja verde com o prompt novo.
+- Teste de honestidade sobre o Relatório gerado, o README e o case study: **T12**.
+
+### Tabela de fechamento
+
+Cada linha foi conferida com `get_issue` (com relações) depois da criação. Todos os tickets são sub-issues de CAR-8.
+
+| Ticket | Issue | URL | Bloqueado por |
+|---|---|---|---|
+| T1: Spike do Gateway (CLIProxyAPI local) e decisão go/no-go | CAR-9 | https://linear.app/1bitpios/issue/CAR-9/t1-spike-do-gateway-cliproxyapi-local-e-decisao-gono-go | nenhum (pré-requisito humano: Plano B nomeado) |
+| T2: Rodada mínima com provider falso e Avaliador | CAR-10 | https://linear.app/1bitpios/issue/CAR-10/t2-rodada-minima-com-provider-falso-e-avaliador | nenhum |
+| T3: Gravação, manifesto e Replay | CAR-12 | https://linear.app/1bitpios/issue/CAR-12/t3-gravacao-manifesto-e-replay | CAR-10 (T2) |
+| T4: Repetições (mínimo 3) e aborto de Rodada | CAR-14 | https://linear.app/1bitpios/issue/CAR-14/t4-repeticoes-minimo-3-e-aborto-de-rodada | CAR-12 (T3) |
+| T5: Provider Gateway (CLIProxyAPI local) no formato Anthropic | CAR-13 | https://linear.app/1bitpios/issue/CAR-13/t5-provider-gateway-cliproxyapi-local-no-formato-anthropic | CAR-10 (T2), CAR-9 (T1) |
+| T6: Provider Anthropic, contrato entre providers e suíte offline | CAR-15 | https://linear.app/1bitpios/issue/CAR-15/t6-provider-anthropic-contrato-entre-providers-e-suite-offline | CAR-13 (T5) |
+| T7: Dataset de 20-30 Transcrições com validação | CAR-11 | https://linear.app/1bitpios/issue/CAR-11/t7-dataset-de-20-30-transcricoes-com-validacao | nenhum |
+| T8: Prompt v0, piloto e congelamento do Dataset | CAR-16 | https://linear.app/1bitpios/issue/CAR-16/t8-prompt-v0-piloto-e-congelamento-do-dataset | CAR-13 (T5), CAR-11 (T7) |
+| T9: Relatório: comando de Replay, tabela por versão e todas as Rodadas | CAR-17 | https://linear.app/1bitpios/issue/CAR-17/t9-relatorio-comando-de-replay-tabela-por-versao-e-todas-as-rodadas | CAR-12 (T3) |
+| T10: Veredito v0 × versão final e lista de Transcrições que mudaram | CAR-18 | https://linear.app/1bitpios/issue/CAR-18/t10-veredito-v0-versao-final-e-lista-de-transcricoes-que-mudaram | CAR-17 (T9), CAR-14 (T4) |
+| T11: Primeiro corte: v0 e v1 medidas ponta a ponta no Gateway (CLIProxyAPI local) | CAR-20 | https://linear.app/1bitpios/issue/CAR-20/t11-primeiro-corte-v0-e-v1-medidas-ponta-a-ponta-no-gateway | CAR-14 (T4), CAR-15 (T6), CAR-16 (T8), CAR-18 (T10) |
+| T12: Case study e README com a matriz "o que cada teste comprova" | CAR-21 | https://linear.app/1bitpios/issue/CAR-21/t12-case-study-e-readme-com-a-matriz-o-que-cada-teste-comprova | CAR-20 (T11) |
+| T13 (opcional): v2 como alvo | CAR-22 | https://linear.app/1bitpios/issue/CAR-22/t13-opcional-v2-como-alvo | CAR-20 (T11) |
+| T14: Margem de variação da Reexecução no Relatório | CAR-19 | https://linear.app/1bitpios/issue/CAR-19/t14-margem-de-variacao-da-reexecucao-no-relatorio | CAR-14 (T4), CAR-17 (T9) |
+
+Notas de execução: o T14 é bloqueado por T4 e T9 (a margem é impressa no Relatório); o T1 depende de o humano nomear o Plano B (modelo e provedor) antes de começar; T1 e T11 não levam o label `ready-for-agent` porque dependem do humano e do Gateway (CLIProxyAPI local) rodando. Frentes paralelas que começam já: T1, T2 e T7. Caminho crítico: T2 → T3 → T9 → T10 → T11 → T12.
