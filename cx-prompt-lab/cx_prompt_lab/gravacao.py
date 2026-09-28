@@ -14,13 +14,15 @@ import hashlib
 import json
 import os
 import shutil
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 from cx_prompt_lab.dataset import Dataset
 from cx_prompt_lab.provider import RespostaProvider
 
-VERSAO_ESQUEMA = 1
+VERSAO_ESQUEMA = 2
 FERRAMENTA_VERSAO = "0.1.0"
 AVALIADOR_VERSAO = "0.1.0"
 
@@ -57,6 +59,10 @@ def hash_chamada(rodada_id: str, hash_prompt: str, transcricao_id: str, repetica
     return hash_texto(identidade)
 
 
+def agora_iso() -> str:
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 @dataclass(frozen=True)
 class Chamada:
     rodada_id: str
@@ -68,6 +74,7 @@ class Chamada:
     temperatura: float | None
     max_tokens: int | None
     resposta: str
+    criado_em: str
 
     def identidade_hash(self) -> str:
         return hash_chamada(self.rodada_id, self.hash_prompt, self.transcricao_id, self.repeticao)
@@ -87,6 +94,7 @@ class Chamada:
             temperatura=dado.get("temperatura"),
             max_tokens=dado.get("max_tokens"),
             resposta=dado["resposta"],
+            criado_em=dado["criado_em"],
         )
 
 
@@ -153,12 +161,14 @@ class ProviderGravador:
         rodada_id: str,
         hash_prompt: str,
         parametros_geracao: dict | None = None,
+        relogio: Callable[[], str] = agora_iso,
     ):
         self._provider = provider
         self._rodada_id = rodada_id
         self._hash_prompt = hash_prompt
         self._parametros_geracao = parametros_geracao or {}
         self._contador = ContadorDeRepeticaoPorTranscricao(dataset)
+        self._relogio = relogio
         self.chamadas: list[Chamada] = []
 
     def chamar(self, prompt: str, transcricao: str) -> RespostaProvider:
@@ -177,6 +187,7 @@ class ProviderGravador:
                 temperatura=self._parametros_geracao.get("temperature"),
                 max_tokens=self._parametros_geracao.get("max_tokens"),
                 resposta=resposta.texto,
+                criado_em=self._relogio(),
             )
         )
         return resposta

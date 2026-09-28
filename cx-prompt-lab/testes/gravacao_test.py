@@ -86,6 +86,7 @@ def test_chamada_gravada_nao_contem_credencial_ou_cabecalho_de_autenticacao():
         temperatura=0.2,
         max_tokens=256,
         resposta=RESPOSTA,
+        criado_em="2026-09-28T10:00:00Z",
     )
 
     dado = chamada.para_dict()
@@ -109,6 +110,7 @@ def _chamadas_para_dataset(dataset: Dataset, hash_prompt: str, rodada_id: str, r
                     temperatura=0.2,
                     max_tokens=256,
                     resposta=RESPOSTA,
+                    criado_em="2026-09-28T10:00:00Z",
                 )
             )
     return chamadas
@@ -245,6 +247,25 @@ def test_rodada_abortada_grava_manifesto_com_estado_abortada_e_replay_a_recusa(t
 
     with pytest.raises(RecusaReplay, match="não está completa"):
         substituir(caminho_rodada=diretorio_rodada, dataset=dataset, prompt_texto="v0", repeticoes=3)
+
+
+def test_provider_gravador_registra_criado_em_usando_o_relogio_injetado():
+    dataset = _dataset_duas_transcricoes()
+    fake = FakeProvider([RESPOSTA] * 6)
+    marcas = iter(f"2026-09-28T10:00:{i:02d}Z" for i in range(6))
+    gravador = ProviderGravador(
+        provider=fake,
+        dataset=dataset,
+        rodada_id="rodada-1",
+        hash_prompt=hash_texto("v0"),
+        relogio=lambda: next(marcas),
+    )
+
+    rodar(versao_prompt="v0", dataset=dataset, provider=gravador, repeticoes=3)
+
+    assert [c.criado_em for c in gravador.chamadas] == [
+        f"2026-09-28T10:00:{i:02d}Z" for i in range(6)
+    ]
 
 
 def test_hash_dataset_muda_quando_conteudo_do_dataset_muda():
