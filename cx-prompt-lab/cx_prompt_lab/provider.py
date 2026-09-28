@@ -19,3 +19,13 @@ class RespostaProvider:
 
 class Provider(Protocol):
     def chamar(self, prompt: str, transcricao: str) -> RespostaProvider: ...
+
+
+class ErroProvider(Exception):
+    """Erro do provider (timeout, limite de taxa, erro HTTP). Nunca vira Chamada
+    nem resposta — quem chama o Provider decide o que fazer (T4: aborta a Rodada).
+    """
+
+    def __init__(self, mensagem: str, causa_provavel: str):
+        super().__init__(mensagem)
+        self.causa_provavel = causa_provavel

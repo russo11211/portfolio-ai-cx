@@ -191,6 +191,7 @@ def gravar(
     chamadas: list[Chamada],
     repeticoes: int,
     parametros_efetivos: dict,
+    estado: str = ESTADO_COMPLETA,
 ) -> Manifesto:
     diretorio_rodadas = Path(diretorio_rodadas)
     hash_prompt_valor = hash_texto(prompt_texto)
@@ -206,13 +207,22 @@ def gravar(
     if len(identidades_recebidas) != len(chamadas):
         raise RecusaGravacao(f"Recusa: Rodada {rodada_id}; Chamadas duplicadas entre as recebidas para gravação")
 
-    if identidades_recebidas != identidades_esperadas:
-        faltando = identidades_esperadas - identidades_recebidas
+    if estado == ESTADO_COMPLETA:
+        if identidades_recebidas != identidades_esperadas:
+            faltando = identidades_esperadas - identidades_recebidas
+            extra = identidades_recebidas - identidades_esperadas
+            raise RecusaGravacao(
+                f"Recusa: Rodada {rodada_id}; Chamadas recebidas não batem com o esperado "
+                f"({len(faltando)} faltando, {len(extra)} extra); numero esperado {numero_esperado}"
+            )
+    else:
+        # Rodada abortada (T4): as Chamadas gravadas são as concluídas antes do
+        # aborto, sem bater com o esperado por definição — só extras são recusa.
         extra = identidades_recebidas - identidades_esperadas
-        raise RecusaGravacao(
-            f"Recusa: Rodada {rodada_id}; Chamadas recebidas não batem com o esperado "
-            f"({len(faltando)} faltando, {len(extra)} extra); numero esperado {numero_esperado}"
-        )
+        if extra:
+            raise RecusaGravacao(
+                f"Recusa: Rodada {rodada_id}; {len(extra)} Chamada(s) fora do esperado para esta Rodada abortada"
+            )
 
     diretorio_final = diretorio_rodadas / rodada_id
     if diretorio_final.exists():
@@ -230,7 +240,7 @@ def gravar(
         hash_dataset=hash_dataset_valor,
         parametros_efetivos=parametros_efetivos,
         numero_esperado_chamadas=numero_esperado,
-        estado=ESTADO_COMPLETA,
+        estado=estado,
         ferramenta_versao=FERRAMENTA_VERSAO,
         avaliador_versao=AVALIADOR_VERSAO,
     )

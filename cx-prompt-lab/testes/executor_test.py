@@ -1,8 +1,10 @@
+import time
+
 import pytest
 
 from cx_prompt_lab.dataset import Dataset, Transcricao
-from cx_prompt_lab.executor import rodar
-from cx_prompt_lab.provider import RespostaProvider
+from cx_prompt_lab.executor import AbortoRodada, rodar
+from cx_prompt_lab.provider import ErroProvider, RespostaProvider
 
 ROTULOS_VALIDOS = ["cancelamento", "duvida", "reclamacao"]
 
@@ -117,3 +119,114 @@ def test_rodada_recusa_menos_de_3_repeticoes_com_mensagem():
 
     with pytest.raises(ValueError, match="repeticoes"):
         rodar(versao_prompt="v0", dataset=dataset, provider=provider, repeticoes=2)
+
+
+@pytest.mark.parametrize("versao_prompt", ["v0", "v1", "v2"])
+def test_rodada_recusa_menos_de_3_repeticoes_em_qualquer_versao(versao_prompt):
+    dataset = _dataset_de_uma_transcricao()
+    provider = ProviderFalso(respostas=[])
+
+    with pytest.raises(ValueError, match="repeticoes"):
+        rodar(versao_prompt=versao_prompt, dataset=dataset, provider=provider, repeticoes=2)
+
+
+class ProviderComErro:
+    """Provider roteirizado que falha (timeout/limite de taxa/HTTP) numa Chamada."""
+
+    def __init__(self, respostas_antes_do_erro: list[str], mensagem: str, causa_provavel: str):
+        self._respostas = respostas_antes_do_erro
+        self._indice = 0
+        self._mensagem = mensagem
+        self._causa_provavel = causa_provavel
+        self.chamadas = 0
+
+    def chamar(self, prompt: str, transcricao: str) -> RespostaProvider:
+        self.chamadas += 1
+        if self._indice < len(self._respostas):
+            texto = self._respostas[self._indice]
+            self._indice += 1
+            return RespostaProvider(texto=texto, motivo_parada="fim_normal", modelo="fake-model", temperatura=0.0)
+        raise ErroProvider(self._mensagem, causa_provavel=self._causa_provavel)
+
+
+class ProviderLento:
+    """Provider que demora mais que o timeout configurado."""
+
+    def __init__(self, atraso_s: float):
+        self._atraso_s = atraso_s
+
+    def chamar(self, prompt: str, transcricao: str) -> RespostaProvider:
+        time.sleep(self._atraso_s)
+        return RespostaProvider(texto="{}", motivo_parada="fim_normal", modelo="fake-model", temperatura=0.0)
+
+
+def test_erro_do_provider_aborta_a_rodada_sem_virar_chamada_nem_resposta():
+    dataset = _dataset_de_uma_transcricao()
+    resposta_correta = '{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}'
+    provider = ProviderComErro(
+        respostas_antes_do_erro=[resposta_correta],
+        mensagem="limite de taxa excedido",
+        causa_provavel="limite de taxa do provider atingido",
+    )
+
+    with pytest.raises(AbortoRodada):
+        rodar(versao_prompt="v0", dataset=dataset, provider=provider, repeticoes=3)
+
+    # a Chamada 1 teve sucesso; a Chamada 2 (que falhou) não conta como resultado
+    assert provider.chamadas == 2
+
+
+def test_erro_do_provider_nao_gera_retentativa_automatica():
+    dataset = _dataset_de_uma_transcricao()
+    provider = ProviderComErro(
+        respostas_antes_do_erro=[], mensagem="erro HTTP 500", causa_provavel="provider instável"
+    )
+
+    with pytest.raises(AbortoRodada):
+        rodar(versao_prompt="v0", dataset=dataset, provider=provider, repeticoes=3)
+
+    assert provider.chamadas == 1  # nenhuma segunda tentativa da mesma Chamada
+
+
+def test_timeout_por_chamada_aborta_a_rodada():
+    dataset = _dataset_de_uma_transcricao()
+    provider = ProviderLento(atraso_s=0.3)
+
+    with pytest.raises(AbortoRodada, match="timeout"):
+        rodar(versao_prompt="v0", dataset=dataset, provider=provider, repeticoes=3, timeout_s=0.05)
+
+
+def test_progresso_reporta_chamada_n_de_m():
+    dataset = _dataset_de_uma_transcricao()
+    resposta_correta = '{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}'
+    provider = ProviderFalso(respostas=[resposta_correta] * 3)
+    mensagens: list[str] = []
+
+    rodar(
+        versao_prompt="v0",
+        dataset=dataset,
+        provider=provider,
+        repeticoes=3,
+        on_progresso=mensagens.append,
+    )
+
+    assert mensagens == ["Chamada 1 de 3", "Chamada 2 de 3", "Chamada 3 de 3"]
+
+
+def test_mensagem_de_aborto_contem_problema_causa_proximo_passo_rodada_transcricao_comando_e_aviso():
+    dataset = _dataset_de_uma_transcricao()
+    provider = ProviderComErro(
+        respostas_antes_do_erro=[], mensagem="timeout de conexão", causa_provavel="rede instável"
+    )
+
+    with pytest.raises(AbortoRodada) as excinfo:
+        rodar(versao_prompt="v0", dataset=dataset, provider=provider, repeticoes=3, rodada_id="rodada-42")
+
+    mensagem = str(excinfo.value)
+    assert "problema" in mensagem
+    assert "causa provável" in mensagem
+    assert "próximo passo" in mensagem
+    assert "Rodada rodada-42" in mensagem
+    assert "Transcrição t1" in mensagem
+    assert "reexecutar" in mensagem
+    assert "serão repetidas" in mensagem

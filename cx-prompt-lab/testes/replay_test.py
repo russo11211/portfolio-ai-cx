@@ -245,6 +245,50 @@ def test_replay_recusa_transcricao_fora_do_dataset(tmp_path):
         substituir(caminho_rodada=diretorio_rodada, dataset=dataset, prompt_texto="v0", repeticoes=3)
 
 
+def test_replay_recusa_menos_de_3_repeticoes(tmp_path):
+    # Uma Rodada gravada com só 2 Repetições (a gravação em si não impõe o
+    # piso; quem impõe é o Executor, que o Replay reusa) precisa ser recusada
+    # pelo Replay ao recalcular, não silenciosamente aceita.
+    from cx_prompt_lab.gravacao import Chamada, gravar, hash_texto
+
+    dataset = _dataset()
+    prompt_texto = "v0"
+    hash_prompt = hash_texto(prompt_texto)
+    chamadas = [
+        Chamada(
+            rodada_id="rodada-2-repeticoes",
+            hash_prompt=hash_prompt,
+            transcricao_id=t.id,
+            repeticao=r,
+            modelo="fake-model",
+            motivo_parada="fim_normal",
+            temperatura=0.2,
+            max_tokens=None,
+            resposta=RESPOSTA_CORRETA,
+        )
+        for r in (1, 2)
+        for t in dataset.transcricoes
+    ]
+    gravar(
+        diretorio_rodadas=tmp_path,
+        rodada_id="rodada-2-repeticoes",
+        versao_prompt=prompt_texto,
+        prompt_texto=prompt_texto,
+        dataset=dataset,
+        chamadas=chamadas,
+        repeticoes=2,
+        parametros_efetivos={},
+    )
+
+    with pytest.raises(ValueError, match="repeticoes"):
+        substituir(
+            caminho_rodada=tmp_path / "rodada-2-repeticoes",
+            dataset=dataset,
+            prompt_texto=prompt_texto,
+            repeticoes=2,
+        )
+
+
 def test_toda_mensagem_de_recusa_segue_o_formato_fixo_da_adr(tmp_path):
     dataset = _dataset()
     _gravar_rodada_de_exemplo(tmp_path, dataset)
