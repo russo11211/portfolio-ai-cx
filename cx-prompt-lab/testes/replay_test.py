@@ -265,6 +265,7 @@ def test_replay_recusa_menos_de_3_repeticoes(tmp_path):
             temperatura=0.2,
             max_tokens=None,
             resposta=RESPOSTA_CORRETA,
+            criado_em="2026-09-28T10:00:00Z",
         )
         for r in (1, 2)
         for t in dataset.transcricoes
