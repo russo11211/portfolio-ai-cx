@@ -21,7 +21,7 @@ Este projeto roda na **fábrica agêntica**. Você é o operador da linha de mon
 | 3 | Vocabulário | `/grill-with-docs` | `ideia.md` | `CONTEXT.md` + `docs/adr/` | cada termo repetido tem definição que **exclui** algo |
 | 4 | Spec | `/to-spec` | `ideia.md` + `CONTEXT.md` | spec no Linear (cópia em `docs/spec/<slug>.md`) | um estranho lê e sabe: problema, fora de escopo, como verificar. Zero critério não verificável |
 | 5 | Revisão de plano | `/autoplan` (roteiro na seção "Estágio 5") | spec | spec revisada + triagem no Review record | nenhum crítico aberto; alguma coisa foi **cortada** com justificativa escrita; nenhuma interpretação `PENDENTE`; triagem registrada; spec commitada |
-| 6 | Tickets | `/to-tickets` | spec revisada | **issues no Linear** (time Carreira; um ticket = uma issue) | cada ticket cabe em 1 PR **e** entrega algo observável (tracer bullet, não camada) |
+| 6 | Tickets | `/to-tickets` (roteiro na seção "Estágio 6") | spec revisada | **issues no Linear** (time Carreira; um ticket = uma issue) + matriz e tabela de fechamento gravadas na spec (e na issue-pai, se houver) | cada ticket cabe em 1 PR **e** entrega algo observável (tracer bullet, não camada); matriz de cobertura sem lacuna antes do aval; tabela de fechamento conferida com `get_issue`; spec commitada |
 | 7 | Arquitetura | `/codebase-design` | tickets + repo + "Exigências da ADR do E7" (triagem do E5) | ADR em `docs/adr/` | as **seams** estão nomeadas; para cada ticket você sabe qual seam ele toca; cada exigência do E5 foi decidida na ADR ou descartada com motivo |
 | 8 | Implementação | `/implement` (dirige `/tdd`) | **um** ticket | commit verificado por testes | teste que falhava antes passa; suíte verde; diff só nos arquivos previstos na ADR |
 | 9 | QA | `/qa` | app rodando | bugs corrigidos + `docs/qa/<data>-<slug>.md` | o relatório **nomeia os fluxos percorridos**, e são os do primeiro corte |
@@ -72,7 +72,7 @@ errado — pare e pergunte.
 - `/autoplan` — E5. As 4 lentes (CEO, design, eng, DX) em sequência, um gate humano só.
   Siga a seção "Estágio 5 — checklist operacional".
 - `/to-tickets` — E6. Fatias verticais tracer-bullet com arestas de bloqueio, criadas
-  como **issues no Linear**.
+  como **issues no Linear**. Siga a seção "Estágio 6 — critérios de saída".
 - `/codebase-design` — E7. Decide módulos e seams antes da primeira linha de código.
 - `/implement` — E8. Um ticket por janela limpa.
 - `/tdd` — E8. Vermelho → verde → refatora, restrito à seam acordada.
@@ -108,10 +108,10 @@ docs/qa/<data>-<slug>.md            E9
 docs/retro/<data>.md                E12
 .scratch/                           rascunho efêmero. NÃO é lugar de ticket — ticket vive no Linear
 .claude/                            configuração do harness deste projeto
+```
 
 Tickets (E6) vivem no Linear (time Carreira), não em arquivo local. Ver
 `docs/agents/issue-tracker.md`.
-```
 
 Não invente outro lugar. Artefato fora da convenção quebra a rastreabilidade
 ideia → spec → ticket → PR → release.
@@ -127,8 +127,8 @@ ideia → spec → ticket → PR → release.
 - **Pare e pergunte nos pontos de decisão humana:** o que fica fora de escopo (E1),
   seguir ou arquivar a ideia (E2), escopo, critério de sucesso, riscos bloqueantes,
   interpretações e cortes no gate único do E5 (o resto do E5 é triado sem perguntar),
-  aceitar o risco do diff (E10), disparar o deploy (E12). Recomende; quem assina é o
-  humano.
+  o desenho dos tickets e a atualização da issue-pai (E6), aceitar o risco do diff (E10),
+  disparar o deploy (E12). Recomende; quem assina é o humano.
 - **Decisão arquitetural vira ADR.** Se a conversa decidiu uma fronteira de módulo, uma
   seam, um formato de dado persistido ou uma dependência estrutural, escreva
   `docs/adr/NNNN-titulo.md` com: decisão, alternativas descartadas, motivo. Antes de
@@ -139,6 +139,11 @@ ideia → spec → ticket → PR → release.
   (elas estão bloqueadas em `.claude/settings.json`).
 - **`/clear` entre estágios e entre tickets.** Lembre o humano quando ele esquecer.
 - **Um estágio, uma sessão.** Não encadeie dois estágios na mesma janela.
+- **Skills de estágio de invocação humana: só o humano as dispara.** `/grill-with-docs`,
+  `/setup-matt-pocock-skills`, `/to-spec`, `/to-tickets` e `/implement` têm
+  `disable-model-invocation: true`: não aparecem na sua lista de skills e você não as aciona. Se
+  pedirem o estágio sem o comando ("fazer E6"), **pare** e peça ao humano para digitar o comando
+  (`/to-tickets`). Nunca abra o `SKILL.md` delas para seguir o procedimento à mão.
 
 ## Estágio 5 — checklist operacional
 
@@ -321,6 +326,32 @@ Depois do A, o `/autoplan` sugere `/ship`. Ignore: o próximo é `/clear` e o E6
 - `TODOS.md`, onde o `/autoplan` grava o que adia, não é backlog. A lista de adiados que vale é a
   da triagem, e nada vira ticket sem passar pelo E6.
 
+## Estágio 6 — critérios de saída
+
+Além do que o `/to-tickets` faz, o E6 só fecha com todos estes:
+- [ ] **Matriz de cobertura, antes do aval do desenho:** cada história de usuário, cada Testing
+  Decision e cada item de bloco `autoplan-accepted:*` da spec → um ticket `Tn`, ou `fora de escopo`
+  / `adiado` com motivo. Linha sem destino: o desenho não vai para aprovação.
+- [ ] **Critério que atravessa tickets tem um ticket dono**, em geral o que fecha por último; os
+  outros o citam, não o repetem.
+- [ ] **Invariante vira teste ou CI** no primeiro ticket em que se aplica; os seguintes a
+  referenciam.
+- [ ] **Issue-pai sincronizada (obrigatório, se houver pai):** antes de criar sub-issues, mostre o
+  diff da descrição da pai contra `docs/spec/<slug>.md`, espere o ok do humano e **atualize** a pai.
+  Regra da fábrica que sobrepõe o "Do NOT close or modify any parent issue" do `/to-tickets`:
+  alterar pode, **fechar a pai continua proibido**.
+- [ ] **Glossário com nome concreto:** na primeira menção, em cada ticket, a termo do `CONTEXT.md`
+  que designa componente ou tecnologia externa, o nome concreto vai entre parênteses ("Fila (Redis
+  local)").
+- [ ] **Tabela de fechamento** na mensagem final: `Tn` → identificador (`ABC-123`) → URL →
+  bloqueado por, cada linha conferida com `get_issue`. Sem ela o E6 não está concluído (mesma regra
+  de evidência do E5).
+- [ ] **Gravado em disco:** a matriz aprovada e a tabela de fechamento vão para
+  `## Cobertura e fechamento (E6)`, ao fim de `docs/spec/<slug>.md` (depois do Review record), e a
+  spec é commitada, **sem push** (`docs(E6): … e encerra E6`). A conversa se perde no `/clear`; o
+  hash do commit entra na mensagem final. A mesma seção vai para a issue-pai, se houver, e um
+  `get_issue` nela depois de atualizar entra na evidência da tabela.
+
 ## Se algo der errado
 
 | Sintoma | O que fazer |
@@ -330,7 +361,7 @@ Depois do A, o `/autoplan` sugere `/ship`. Ignore: o próximo é `/clear` e o E6
 | Contexto estourando no meio do estágio | `/context-save` → `/clear` → `/context-restore`. Se o artefato já existe, só `/clear` |
 | Entreguei artefato que não era o pedido | Não corrija por cima. `/clear`, reabra o estágio e refaça a partir do artefato **anterior** |
 | O Linear não responde | Pare e avise o humano. Não crie tracker local de substituição. Autenticação: `/mcp` numa sessão interativa |
-| Skill não apareceu | Ela pode não estar instalada ou não estar na allowlist de `.claude/settings.json`. Não improvise substituta — avise o humano |
+| Skill não apareceu | Se é uma das de invocação humana (ver Regras), é o esperado: peça ao humano para digitar o comando. Senão, ela pode não estar instalada ou não estar na allowlist de `.claude/settings.json`. Não improvise substituta nem siga o `SKILL.md` à mão — avise o humano |
 | Hook, helper ou validador do `/autoplan` recusou (E5) | Pare e mostre a mensagem inteira ao humano. Confira os patches do gstack (passo 0 do E5). Não contorne nem edite estado à mão. As recusas conhecidas estão nas linhas abaixo |
 | E5: `Snapshot identity/content does not match this phase and active plan` | Checkpoint errado. Use o `…/<fase>-implementation.md` do `create` de checkpoint de emenda, não o do `create` das vozes nem o `snapshot.json` (passo 1 do E5) |
 | E5: `Missing accepted-obligations record for <fase>` | O registro `autoplan-accepted:*` do Review record foi removido. Não recrie à mão: pare e mostre ao humano |
