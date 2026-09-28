@@ -4,3 +4,9 @@
 # artefatos de sessão
 .gstack/
 *.log
+
+# python (cx-prompt-lab)
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
