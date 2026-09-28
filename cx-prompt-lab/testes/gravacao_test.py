@@ -1,8 +1,9 @@
 import pytest
 
 from cx_prompt_lab.dataset import Dataset, Transcricao
-from cx_prompt_lab.executor import rodar
+from cx_prompt_lab.executor import AbortoRodada, rodar
 from cx_prompt_lab.gravacao import (
+    ESTADO_ABORTADA,
     Chamada,
     ProviderGravador,
     RecusaGravacao,
@@ -10,7 +11,8 @@ from cx_prompt_lab.gravacao import (
     hash_dataset,
     hash_texto,
 )
-from cx_prompt_lab.provider import RespostaProvider
+from cx_prompt_lab.provider import ErroProvider, RespostaProvider
+from cx_prompt_lab.replay import RecusaReplay, substituir
 
 ROTULOS_VALIDOS = ["cancelamento", "duvida", "reclamacao"]
 
@@ -187,6 +189,62 @@ def test_gravar_recusa_quando_chamadas_nao_batem_com_o_esperado_e_nao_publica_na
 
     assert not (tmp_path / "rodada-1").exists()
     assert list(tmp_path.glob("*")) == []
+
+
+class ProviderComErroNaSegundaChamada:
+    def __init__(self):
+        self.chamadas = 0
+
+    def chamar(self, prompt: str, transcricao: str) -> RespostaProvider:
+        self.chamadas += 1
+        if self.chamadas == 1:
+            return RespostaProvider(texto=RESPOSTA, motivo_parada="fim_normal", modelo="fake-model", temperatura=0.2)
+        raise ErroProvider("erro HTTP 500", causa_provavel="provider instável")
+
+
+def test_rodada_abortada_grava_manifesto_com_estado_abortada_e_replay_a_recusa(tmp_path):
+    dataset = _dataset_duas_transcricoes()
+    hash_prompt = hash_texto("v0")
+    provider_falho = ProviderComErroNaSegundaChamada()
+    gravador = ProviderGravador(
+        provider=provider_falho,
+        dataset=dataset,
+        rodada_id="rodada-abortada",
+        hash_prompt=hash_prompt,
+    )
+
+    with pytest.raises(AbortoRodada):
+        rodar(
+            versao_prompt="v0",
+            dataset=dataset,
+            provider=gravador,
+            repeticoes=3,
+            rodada_id="rodada-abortada",
+        )
+
+    # a Chamada que teve sucesso antes do erro foi gravada pelo ProviderGravador
+    assert len(gravador.chamadas) == 1
+
+    manifesto = gravar(
+        diretorio_rodadas=tmp_path,
+        rodada_id="rodada-abortada",
+        versao_prompt="v0",
+        prompt_texto="v0",
+        dataset=dataset,
+        chamadas=gravador.chamadas,
+        repeticoes=3,
+        parametros_efetivos={},
+        estado=ESTADO_ABORTADA,
+    )
+
+    assert manifesto.estado == ESTADO_ABORTADA
+
+    diretorio_rodada = tmp_path / "rodada-abortada"
+    arquivos_chamada = [p for p in diretorio_rodada.glob("*.json") if p.name != "manifest.json"]
+    assert len(arquivos_chamada) == 1  # só a Chamada concluída antes do aborto
+
+    with pytest.raises(RecusaReplay, match="não está completa"):
+        substituir(caminho_rodada=diretorio_rodada, dataset=dataset, prompt_texto="v0", repeticoes=3)
 
 
 def test_hash_dataset_muda_quando_conteudo_do_dataset_muda():
