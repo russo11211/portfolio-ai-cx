@@ -883,3 +883,12 @@ Cada linha foi conferida com `get_issue` (com relações) depois da criação. T
 | T14: Margem de variação da Reexecução no Relatório | CAR-19 | https://linear.app/1bitpios/issue/CAR-19/t14-margem-de-variacao-da-reexecucao-no-relatorio | CAR-14 (T4), CAR-17 (T9) |
 
 Notas de execução: o T14 é bloqueado por T4 e T9 (a margem é impressa no Relatório); o T1 depende de o humano nomear o Plano B (modelo e provedor) antes de começar; T1 e T11 não levam o label `ready-for-agent` porque dependem do humano e do Gateway (CLIProxyAPI local) rodando. Frentes paralelas que começam já: T1, T2 e T7. Caminho crítico: T2 → T3 → T9 → T10 → T11 → T12.
+
+## Emenda do humano para CAR-9 (2026-09-28)
+
+Esta emenda substitui, **para o método OAuth da assinatura Claude no CAR-9 e no primeiro corte**, a exigência da história 32 e dos trechos de “Pré-condição, primeiro spike” e “Plano B do spike do Gateway” que tornavam a conformidade de termos uma pré-condição eliminatória e determinavam NO-GO automático por avaliação dos termos. Os blocos `autoplan-accepted:*` e sua cópia no Implementation plan permanecem preservados como histórico do E5; para essa decisão posterior e específica, vale esta emenda.
+
+- **Método autorizado para o spike:** OAuth da assinatura Claude do próprio candidato, por meio do CLIProxyAPI local. O humano escolheu o método e autorizou expressamente prosseguir apesar da incerteza sobre os termos. A instalação e cada commit exigem o ok específico definido para CAR-9.
+- **Gate antes da instalação:** registrar na ADR 0002 o método, as fontes examinadas, a contestação do humano e a regra de decisão. A incerteza sobre os termos **não bloqueia** o spike e **não determina NO-GO** para este método. A decisão GO/NO-GO final é tomada depois das conferências técnicas do Gateway; o system prompt intacto é obrigatório.
+- **Limite da decisão:** conformidade deste fluxo específico com os termos do provedor continua **NÃO VERIFICADA** e o risco aberto 3 permanece **ABERTO**. Esta emenda não declara que os termos permitem o método. Evidência sintética continua inválida; a decisão escrita continua obrigatória antes do primeiro prompt de produção.
+- **Rastreabilidade:** a ADR 0002 registra a decisão e os resultados do CAR-9. A descrição da issue-pai no Linear é a fonte da verdade do tracker e deverá receber esta emenda por ação separada, autorizada pelo humano.
