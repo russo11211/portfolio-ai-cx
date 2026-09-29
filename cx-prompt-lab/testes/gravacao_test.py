@@ -57,6 +57,43 @@ def test_provider_gravador_registra_uma_chamada_por_transcricao_e_repeticao():
     assert all(c.rodada_id == "rodada-1" for c in gravador.chamadas)
 
 
+def test_gravacao_nao_confunde_temperatura_pedida_com_temperatura_aplicada():
+    class ProviderSemTemperatura:
+        def chamar(self, prompt: str, transcricao: str) -> RespostaProvider:
+            return RespostaProvider("ok", "fim_normal", "modelo-observado", None)
+
+    dataset = _dataset_duas_transcricoes()
+    gravador = ProviderGravador(
+        provider=ProviderSemTemperatura(),
+        dataset=dataset,
+        rodada_id="rodada-1",
+        hash_prompt=hash_texto("prompt"),
+        parametros_geracao={"temperature": 0, "max_tokens": 64},
+    )
+
+    gravador.chamar("prompt", dataset.transcricoes[0].texto)
+
+    assert gravador.chamadas[0].temperatura is None
+    assert gravador.chamadas[0].max_tokens == 64
+
+
+def test_gravar_recusa_identificador_que_sai_do_diretorio_de_rodadas(tmp_path):
+    with pytest.raises(RecusaGravacao, match="identificador"):
+        gravar(
+            diretorio_rodadas=tmp_path / "rodadas",
+            rodada_id="../escape",
+            versao_prompt="v0",
+            prompt_texto="prompt",
+            dataset=_dataset_duas_transcricoes(),
+            chamadas=[],
+            repeticoes=3,
+            parametros_efetivos={},
+            estado=ESTADO_ABORTADA,
+        )
+
+    assert not (tmp_path / "escape").exists()
+
+
 def test_provider_gravador_conta_repeticao_por_transcricao_nao_por_ordem_global():
     dataset = _dataset_duas_transcricoes()
     fake = FakeProvider([RESPOSTA] * 6)

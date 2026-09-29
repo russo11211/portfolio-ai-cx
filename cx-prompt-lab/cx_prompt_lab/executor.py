@@ -1,6 +1,7 @@
 """Executor de Rodada: orquestra Provider + Avaliador.
 
-`rodar(versao_prompt, dataset, provider, repeticoes>=3) -> Rodada`. Gravação
+`rodar(versao_prompt, dataset, provider, repeticoes>=3) -> Rodada`. Na Reexecução,
+`prompt_texto` envia o conteúdo ao Provider e mantém `versao_prompt` como identidade. Gravação
 em disco (T3) é transparente a este módulo (o Provider passado já pode ser um
 `ProviderGravador`). Timeout por Chamada, progresso e aborto de Rodada (T4)
 vivem aqui: erro do Provider (`ErroProvider`) ou timeout nunca viram Chamada
@@ -77,6 +78,7 @@ def rodar(
     timeout_s: float = TIMEOUT_PADRAO_S,
     rodada_id: str | None = None,
     on_progresso: Callable[[str], None] | None = None,
+    prompt_texto: str | None = None,
 ) -> Rodada:
     if repeticoes < REPETICOES_MINIMAS:
         raise ValueError(
@@ -97,7 +99,11 @@ def rodar(
                 if on_progresso is not None:
                     on_progresso(f"Chamada {numero_chamada} de {total_chamadas}")
 
-                futuro = pool.submit(provider.chamar, prompt=versao_prompt, transcricao=transcricao.texto)
+                futuro = pool.submit(
+                    provider.chamar,
+                    prompt=versao_prompt if prompt_texto is None else prompt_texto,
+                    transcricao=transcricao.texto,
+                )
                 try:
                     resposta = futuro.result(timeout=timeout_s)
                 except concurrent.futures.TimeoutError:
@@ -126,6 +132,10 @@ def rodar(
                             repeticoes=repeticoes,
                         )
                     ) from erro
+
+                if resposta.motivo_parada in ("truncada", "recusa"):
+                    contagens.violacao_de_formato += 1
+                    continue
 
                 resultado = avaliar(
                     resposta_bruta=resposta.texto,

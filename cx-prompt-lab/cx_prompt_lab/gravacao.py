@@ -13,6 +13,7 @@ recebe), não pela ordem de iteração do Executor.
 import hashlib
 import json
 import os
+import re
 import shutil
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
@@ -184,7 +185,7 @@ class ProviderGravador:
                 repeticao=repeticao,
                 modelo=resposta.modelo,
                 motivo_parada=resposta.motivo_parada,
-                temperatura=self._parametros_geracao.get("temperature"),
+                temperatura=resposta.temperatura,
                 max_tokens=self._parametros_geracao.get("max_tokens"),
                 resposta=resposta.texto,
                 criado_em=self._relogio(),
@@ -204,6 +205,11 @@ def gravar(
     parametros_efetivos: dict,
     estado: str = ESTADO_COMPLETA,
 ) -> Manifesto:
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*", rodada_id):
+        raise RecusaGravacao(
+            f"Recusa: identificador de Rodada inválido {rodada_id!r}; "
+            "ação: use letras, números, _ ou -"
+        )
     diretorio_rodadas = Path(diretorio_rodadas)
     hash_prompt_valor = hash_texto(prompt_texto)
     hash_dataset_valor = hash_dataset(dataset)
