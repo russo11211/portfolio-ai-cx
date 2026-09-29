@@ -8,17 +8,29 @@ de experimentos anteriores, descartadas ou que o Replay recusou) aparecem na
 listagem como "fora do experimento" com o motivo; descartar uma Rodada não a
 apaga nem a sobrescreve (ela continua em `rodadas/descartadas/<id>/`).
 
-O veredito v0 × versão final e a lista de Transcrições que mudaram são do T10
-(`veredito` fica de fora deste módulo); o teste de honestidade sobre os três
-textos commitados é do T12. Este módulo só garante que o texto gerado carrega
-o limite do Replay, a distinção Replay × Reexecução e o rótulo "exploratório".
+O veredito v0 × versão final vem de `conclusao.concluir` (T10) e usa só as
+Rodadas do experimento; pares intermediários e a lista ilustrativa de
+Transcrições que mudaram (Repetição 1 de cada versão) são informativos. O
+teste de honestidade sobre os três textos commitados é do T12. Este módulo
+garante que o texto gerado carrega o limite do Replay, a distinção
+Replay × Reexecução e o rótulo "exploratório".
 """
 
 import json
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from cx_prompt_lab.conclusao import (
+    EFEITO_PISO,
+    INCONCLUSIVO,
+    MELHORA,
+    NAO_COMPARAVEL,
+    PIORA,
+    CondicoesExecucao,
+    concluir,
+)
 from cx_prompt_lab.dataset import Dataset
 from cx_prompt_lab.executor import Contagens
 from cx_prompt_lab.gravacao import Chamada, Manifesto, hash_dataset
@@ -56,6 +68,26 @@ class ResumoRodada:
     modelo: str | None = None
     data: str | None = None
     contagens_por_repeticao: list[Contagens] = field(default_factory=list)
+    rotulos_por_repeticao: list[dict[str, str | None]] = field(default_factory=list)
+    parametros: dict = field(default_factory=dict)
+
+
+ROTULO_DO_VEREDITO = {
+    NAO_COMPARAVEL: "não comparável",
+    PIORA: "piora",
+    EFEITO_PISO: "inconclusivo por efeito piso",
+    MELHORA: "melhora",
+    INCONCLUSIVO: "inconclusivo",
+}
+SEM_ROTULO_VALIDO = "sem rótulo válido"
+
+
+def _ordem_versao(versao: str) -> tuple[int, int, str]:
+    """v0 < v1 < v2 < v10; nomes fora do padrão vN vão depois, em ordem alfabética."""
+    encontrado = re.fullmatch(r"v(\d+)", versao)
+    if encontrado:
+        return (0, int(encontrado.group(1)), versao)
+    return (1, 0, versao)
 
 
 def _ler_manifesto(caminho_manifesto: Path) -> Manifesto | None:
@@ -69,7 +101,7 @@ def _metadados_das_chamadas(caminho_rodada: Path) -> tuple[str | None, str | Non
     """Modelo (o primeiro encontrado) e intervalo de `criado_em` das Chamadas
     gravadas — não o mtime do arquivo, que não sobrevive a um `git clone`
     (ver ADR 0002)."""
-    modelo: str | None = None
+    modelos: set[str] = set()
     datas: list[str] = []
 
     for caminho in sorted(caminho_rodada.glob("*.json")):
@@ -79,10 +111,10 @@ def _metadados_das_chamadas(caminho_rodada: Path) -> tuple[str | None, str | Non
             chamada = Chamada.de_dict(json.loads(caminho.read_text(encoding="utf-8")))
         except (json.JSONDecodeError, KeyError):
             continue
-        if modelo is None:
-            modelo = chamada.modelo
+        modelos.add(chamada.modelo)
         datas.append(chamada.criado_em)
 
+    modelo = ", ".join(sorted(modelos)) if modelos else None
     if not datas:
         return modelo, None
 
@@ -179,10 +211,92 @@ def coletar_resumos(
                 modelo=modelo,
                 data=data,
                 contagens_por_repeticao=rodada.contagens_por_repeticao,
+                rotulos_por_repeticao=rodada.rotulos_por_repeticao,
+                parametros=manifesto.parametros_efetivos,
             )
         )
 
     return resumos
+
+
+def _condicoes(resumo: ResumoRodada) -> CondicoesExecucao:
+    return CondicoesExecucao(modelo=resumo.modelo, parametros=resumo.parametros)
+
+
+def _secao_veredito(por_versao: dict[str, ResumoRodada]) -> list[str]:
+    linhas = ["", "## Veredito (exploratório)", ""]
+    versoes = sorted(por_versao, key=_ordem_versao)
+
+    if "v0" not in por_versao:
+        linhas.append("Veredito: indisponível — nenhuma Rodada completa de v0 no experimento atual.")
+        return linhas
+    if len(versoes) < 2:
+        linhas.append("Veredito: indisponível — só v0 tem Rodada completa; falta uma versão final.")
+        return linhas
+
+    final = versoes[-1]
+    veredito = concluir(
+        por_versao["v0"].contagens_por_repeticao,
+        por_versao[final].contagens_por_repeticao,
+        _condicoes(por_versao["v0"]),
+        _condicoes(por_versao[final]),
+    )
+    linhas.append(f"Veredito v0 × {final}: {ROTULO_DO_VEREDITO[veredito.resultado]}")
+    for diferenca in veredito.diferencas:
+        linhas.append(f"  diferença: {diferenca}")
+    if veredito.resultado == EFEITO_PISO:
+        erro_v0 = [c.erro_de_acerto for c in por_versao["v0"].contagens_por_repeticao]
+        erro_final = [c.erro_de_acerto for c in por_versao[final].contagens_por_repeticao]
+        linhas.append(
+            f"Métrica secundária (Erro de acerto por Repetição): v0 {erro_v0}, {final} {erro_final}; "
+            "nenhuma melhora é declarada."
+        )
+    linhas.append(
+        "Só v0 × versão final tem veredito; resultado exploratório, sem prova estatística formal."
+    )
+
+    intermediarios = list(zip(versoes, versoes[1:])) if len(versoes) > 2 else []
+    if intermediarios:
+        linhas.append("")
+        linhas.append("Pares intermediários (informativos, sem veredito):")
+        for antes, depois in intermediarios:
+            linhas.append(f"- {antes} → {depois}: informativo, sem veredito")
+            for versao in (antes, depois):
+                for indice, c in enumerate(por_versao[versao].contagens_por_repeticao, start=1):
+                    linhas.append(
+                        f"    {versao} Repetição {indice}: erro de acerto={c.erro_de_acerto}, "
+                        f"alucinação={c.alucinacao_total}, violação de formato={c.violacao_de_formato}, "
+                        f"acertos={c.acertos}"
+                    )
+    return linhas
+
+
+def _secao_mudancas(por_versao: dict[str, ResumoRodada]) -> list[str]:
+    linhas = ["", "## Transcrições que mudaram de Rótulo (ilustrativa)", ""]
+    versoes = sorted(por_versao, key=_ordem_versao)
+    if len(versoes) < 2:
+        linhas.append("n/d — é preciso ao menos duas versões com Rodada completa.")
+        return linhas
+
+    linhas.append(
+        "Lista ilustrativa: compara só a Repetição 1 de cada versão consecutiva; "
+        f'resposta sem Rótulo válido aparece como "{SEM_ROTULO_VALIDO}".'
+    )
+    for antes, depois in zip(versoes, versoes[1:]):
+        rotulos_antes = por_versao[antes].rotulos_por_repeticao[0]
+        rotulos_depois = por_versao[depois].rotulos_por_repeticao[0]
+        linhas.append("")
+        linhas.append(f"{antes} → {depois} (Repetição 1):")
+        mudou = False
+        for transcricao_id in rotulos_antes:
+            rotulo_antes = rotulos_antes[transcricao_id] or SEM_ROTULO_VALIDO
+            rotulo_depois = rotulos_depois.get(transcricao_id) or SEM_ROTULO_VALIDO
+            if rotulo_antes != rotulo_depois:
+                mudou = True
+                linhas.append(f"- {transcricao_id}: {rotulo_antes} → {rotulo_depois}")
+        if not mudou:
+            linhas.append("- nenhuma Transcrição mudou de Rótulo")
+    return linhas
 
 
 def _percentual(numerador: int, denominador: int) -> str:
@@ -235,8 +349,12 @@ def renderizar(resumos: list[ResumoRodada], dataset: Dataset) -> str:
             linhas.append(
                 f"  Repetição {indice}: erro de acerto={contagens.erro_de_acerto}, "
                 f"alucinação={contagens.alucinacao_total}, "
-                f"violação de formato={contagens.violacao_de_formato}"
+                f"violação de formato={contagens.violacao_de_formato}, "
+                f"acertos={contagens.acertos}"
             )
+
+    linhas.extend(_secao_veredito(por_versao))
+    linhas.extend(_secao_mudancas(por_versao))
 
     linhas.append("")
     linhas.append("## Todas as Rodadas do repositório")
