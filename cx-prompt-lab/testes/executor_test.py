@@ -50,6 +50,25 @@ def test_provider_e_dependencia_injetada_e_e_chamado_uma_vez_por_transcricao_e_r
     assert len(rodada.contagens_por_repeticao) == 3
 
 
+def test_rodada_envia_texto_do_prompt_ao_provider_sem_perder_a_versao():
+    dataset = _dataset_de_uma_transcricao()
+    resposta_correta = '{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}'
+    provider = ProviderFalso(respostas=[resposta_correta] * 3)
+
+    rodada = rodar(
+        versao_prompt="v0",
+        prompt_texto="Classifique a Transcrição e responda em JSON.",
+        dataset=dataset,
+        provider=provider,
+        repeticoes=3,
+    )
+
+    assert rodada.versao_prompt == "v0"
+    assert provider.chamadas == [
+        ("Classifique a Transcrição e responda em JSON.", dataset.transcricoes[0].texto)
+    ] * 3
+
+
 def test_contagens_saem_por_repeticao_nao_so_no_total():
     dataset = _dataset_de_uma_transcricao()
     resposta_correta = '{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}'
@@ -88,6 +107,22 @@ def test_violacao_de_formato_nao_conta_em_erro_de_acerto_nem_em_alucinacao():
     assert contagem.violacao_de_formato == 1
     assert contagem.erro_de_acerto == 0
     assert contagem.alucinacao_total == 0
+
+
+@pytest.mark.parametrize("motivo_parada", ["truncada", "recusa"])
+def test_parada_truncada_ou_recusa_conta_so_como_violacao_de_formato(motivo_parada):
+    class ProviderComParada:
+        def chamar(self, prompt: str, transcricao: str) -> RespostaProvider:
+            return RespostaProvider(
+                texto='{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}',
+                motivo_parada=motivo_parada,
+                modelo="modelo-observado",
+            )
+
+    rodada = rodar("v0", _dataset_de_uma_transcricao(), ProviderComParada(), repeticoes=3)
+
+    assert all(c.violacao_de_formato == 1 for c in rodada.contagens_por_repeticao)
+    assert all(c.erro_de_acerto == 0 and c.alucinacao_total == 0 for c in rodada.contagens_por_repeticao)
 
 
 def test_alucinacao_total_conta_uma_transcricao_por_vez_nao_por_subtipo():
