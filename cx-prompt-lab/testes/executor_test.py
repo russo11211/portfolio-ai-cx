@@ -265,3 +265,33 @@ def test_mensagem_de_aborto_contem_problema_causa_proximo_passo_rodada_transcric
     assert "Transcrição t1" in mensagem
     assert "reexecutar" in mensagem
     assert "serão repetidas" in mensagem
+
+
+def test_acertos_contam_rotulo_valido_e_correto_com_ou_sem_justificativa_ancorada():
+    dataset = _dataset_de_uma_transcricao()
+    respostas = [
+        '{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}',  # (a)
+        '{"rotulo": "cancelamento", "justificativa": "texto inventado"}',  # (c)
+        '{"rotulo": "duvida", "justificativa": "quero cancelar o meu plano"}',  # (b)
+    ]
+    rodada = rodar("v0", dataset, ProviderFalso(respostas), repeticoes=3)
+
+    assert [c.acertos for c in rodada.contagens_por_repeticao] == [1, 1, 0]
+    assert rodada.rotulos_por_repeticao == [
+        {"t1": "cancelamento"},
+        {"t1": "cancelamento"},
+        {"t1": "duvida"},
+    ]
+
+
+def test_rotulo_inexistente_e_violacao_de_formato_ficam_sem_rotulo_valido():
+    dataset = _dataset_de_uma_transcricao()
+    respostas = [
+        '{"rotulo": "inventado", "justificativa": "quero cancelar o meu plano"}',
+        "não é JSON",
+        '{"rotulo": "cancelamento", "justificativa": "quero cancelar o meu plano"}',
+    ]
+    rodada = rodar("v0", dataset, ProviderFalso(respostas), repeticoes=3)
+
+    assert rodada.rotulos_por_repeticao == [{"t1": None}, {"t1": None}, {"t1": "cancelamento"}]
+    assert [c.acertos for c in rodada.contagens_por_repeticao] == [0, 0, 1]

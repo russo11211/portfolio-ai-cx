@@ -32,12 +32,17 @@ class Contagens:
     # Alucinação, mesmo que ambos ocorram (ver Further Notes da spec).
     alucinacao_total: int = 0
     violacao_de_formato: int = 0
+    # Rótulo válido e correto, com ou sem Justificativa ancorada (linhas (a) e (c)).
+    acertos: int = 0
 
 
 @dataclass
 class Rodada:
     versao_prompt: str
     contagens_por_repeticao: list[Contagens] = field(default_factory=list)
+    # Por Repetição: id da Transcrição -> Rótulo válido devolvido, ou None
+    # ("sem rótulo válido": Violação de formato ou rótulo fora da lista).
+    rotulos_por_repeticao: list[dict[str, str | None]] = field(default_factory=list)
 
 
 class AbortoRodada(Exception):
@@ -94,6 +99,7 @@ def rodar(
     try:
         for _ in range(repeticoes):
             contagens = Contagens()
+            rotulos: dict[str, str | None] = {}
             for transcricao in dataset.transcricoes:
                 numero_chamada += 1
                 if on_progresso is not None:
@@ -135,6 +141,7 @@ def rodar(
 
                 if resposta.motivo_parada in ("truncada", "recusa"):
                     contagens.violacao_de_formato += 1
+                    rotulos[transcricao.id] = None
                     continue
 
                 resultado = avaliar(
@@ -146,10 +153,17 @@ def rodar(
 
                 if resultado.veredito_de_forma == "violacao_de_formato":
                     contagens.violacao_de_formato += 1
+                    rotulos[transcricao.id] = None
                     continue
 
-                if resultado.erro_de_acerto:
+                rotulos[transcricao.id] = (
+                    None if resultado.alucinacao_rotulo_inexistente else resultado.rotulo
+                )
+                if not resultado.erro_de_acerto:
+                    contagens.acertos += 1
+                else:
                     contagens.erro_de_acerto += 1
+
                 if resultado.alucinacao_rotulo_inexistente:
                     contagens.alucinacao_rotulo_inexistente += 1
                 if resultado.alucinacao_justificativa_nao_ancorada:
@@ -158,6 +172,7 @@ def rodar(
                     contagens.alucinacao_total += 1
 
             rodada.contagens_por_repeticao.append(contagens)
+            rodada.rotulos_por_repeticao.append(rotulos)
     finally:
         pool.shutdown(wait=False, cancel_futures=True)
 

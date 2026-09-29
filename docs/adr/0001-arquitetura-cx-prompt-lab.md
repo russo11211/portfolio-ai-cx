@@ -160,6 +160,11 @@ contrato, não o valor observado.
   nem filesystem. O adapter `ReplayProvider` falha alto (código de saída `1`, forma de
   recusa acima) sempre que uma Chamada gravada estiver ausente ou o hash não bater — nunca
   substitui silenciosamente nem inventa resultado.
+- **Nota do T10 (CAR-18):** a assinatura real é `concluir(contagens_v0, contagens_final,
+  condicoes_v0, condicoes_final) -> Veredito`. As `condicoes_*` (modelo devolvido,
+  `temperature`, `max_tokens`) alimentam a pré-condição de comparabilidade da spec e
+  mantêm a função pura. O executor passou a expor `acertos` por Repetição e os Rótulos por
+  Transcrição (`rotulos_por_repeticao`) para a lista de mudanças.
 - **Plano B nomeado:** Groq, Llama 3.3 70B (decisão do humano neste E7). Adapter
   `GroqProvider` no mesmo seam Provider, mapeando o formato de chat completion da Groq
   para `RespostaProvider`. Só instanciado se o spike (T1) declarar o Gateway não-viável.
