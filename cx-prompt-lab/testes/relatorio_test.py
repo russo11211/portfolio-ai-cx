@@ -426,3 +426,86 @@ def test_efeito_piso_imprime_erro_de_acerto_como_metrica_secundaria(tmp_path):
 
     assert "Veredito v0 × v1: inconclusivo por efeito piso" in texto
     assert "Métrica secundária (Erro de acerto por Repetição): v0 [0, 0, 0], v1 [0, 0, 0]" in texto
+
+
+# --- T14: margem de variação da Reexecução (CAR-19) ---
+
+RESPOSTA_ERRADA_T1 = '{"rotulo": "duvida", "justificativa": "cancelar o plano"}'
+UMA_ALUCINACAO = [NAO_ANCORADA_CANCELAMENTO, ANCORADA_DUVIDA]
+DUAS_ALUCINACOES = [NAO_ANCORADA_CANCELAMENTO, NAO_ANCORADA_DUVIDA]
+SEM_ALUCINACAO = [ANCORADA_CANCELAMENTO, ANCORADA_DUVIDA]
+
+
+def test_margem_e_a_amplitude_das_taxas_entre_repeticoes_em_pontos_percentuais(tmp_path):
+    dataset = _dataset()  # 2 Transcrições: cada uma vale 50 pp
+    # Alucinação por Repetição: 2, 1, 2 -> taxas 100, 50, 100 pp -> amplitude calculada à mão: 50.0 pp
+    _gravar_versao(tmp_path, dataset, "v0", "r-v0", [DUAS_ALUCINACOES, UMA_ALUCINACAO, DUAS_ALUCINACOES])
+    # Alucinação por Repetição: 0, 0, 0 -> amplitude 0.0 pp
+    _gravar_versao(tmp_path, dataset, "v1", "r-v1", [SEM_ALUCINACAO] * 3)
+
+    texto = _relatorio(tmp_path, dataset, ["v0", "v1"])
+
+    assert "## Margem de variação da Reexecução" in texto
+    linhas = texto.split("## Margem de variação da Reexecução")[1].splitlines()
+    linha_v0 = next(l for l in linhas if l.startswith("- v0:"))
+    linha_v1 = next(l for l in linhas if l.startswith("- v1:"))
+    assert "alucinação 50.0 pp" in linha_v0
+    assert "alucinação 0.0 pp" in linha_v1
+
+
+def test_margem_cobre_erro_de_acerto_e_violacao_de_formato(tmp_path):
+    dataset = _dataset()
+    # Repetição 1: t1 errada (erro de acerto 1 = 50 pp); Repetição 2: t1 e t2 certas, mas t2 sem JSON (violação 1)
+    _gravar_versao(
+        tmp_path,
+        dataset,
+        "v0",
+        "r-v0",
+        [
+            [RESPOSTA_ERRADA_T1, ANCORADA_DUVIDA],
+            [ANCORADA_CANCELAMENTO, ANCORADA_DUVIDA],
+            [ANCORADA_CANCELAMENTO, "isto não é JSON"],
+        ],
+    )
+
+    texto = _relatorio(tmp_path, dataset, ["v0"])
+
+    assert "erro de acerto 50.0 pp" in texto
+    assert "violação de formato 50.0 pp" in texto
+
+
+def test_margem_declara_que_vale_para_a_reexecucao_e_que_o_replay_bate_exatamente(tmp_path):
+    dataset = _dataset()
+    _gravar_versao(tmp_path, dataset, "v0", "r-v0", [SEM_ALUCINACAO] * 3)
+
+    texto = _relatorio(tmp_path, dataset, ["v0"])
+
+    assert "A margem vale para a Reexecução" in texto
+    assert "o Replay bate exatamente" in texto
+    assert "não decide nenhum veredito" in texto
+
+
+def test_sem_rodada_do_experimento_a_margem_e_nd(tmp_path):
+    texto = _relatorio(tmp_path, _dataset(), [])
+
+    assert "## Margem de variação da Reexecução" in texto
+    assert "n/d" in texto.split("## Margem de variação da Reexecução")[1].split("##")[0]
+
+
+def test_alterar_a_margem_nao_altera_o_veredito(tmp_path, monkeypatch):
+    from cx_prompt_lab import relatorio
+
+    dataset = _dataset()
+    _gravar_versao(tmp_path, dataset, "v0", "r-v0", V0_RUIM)
+    _gravar_versao(tmp_path, dataset, "v1", "r-v1", V1_BOA)
+
+    def secao_veredito(texto):
+        return texto.split("## Veredito (exploratório)")[1].split("## Margem de variação")[0]
+
+    original = secao_veredito(_relatorio(tmp_path, dataset, ["v0", "v1"]))
+
+    monkeypatch.setattr(relatorio, "margem_de_variacao", lambda contagens, total: {"erro_de_acerto": 99.0, "alucinacao_total": 99.0, "violacao_de_formato": 99.0})
+    alterada = _relatorio(tmp_path, dataset, ["v0", "v1"])
+
+    assert secao_veredito(alterada) == original
+    assert "Veredito v0 × v1: melhora" in alterada
