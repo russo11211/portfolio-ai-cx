@@ -299,6 +299,46 @@ def _secao_mudancas(por_versao: dict[str, ResumoRodada]) -> list[str]:
     return linhas
 
 
+METRICAS_DA_MARGEM = (
+    ("erro_de_acerto", "erro de acerto"),
+    ("alucinacao_total", "alucinação"),
+    ("violacao_de_formato", "violação de formato"),
+)
+
+TEXTO_MARGEM = (
+    "Margem de variação: amplitude (maior menos menor) da taxa entre as Repetições "
+    "da versão, em pontos percentuais de taxa. A margem vale para a Reexecução: "
+    "diferença menor que ela entre Rodadas novas pode ser ruído. O Replay não "
+    "tem ruído, o Replay bate exatamente. A margem é só descritiva e não decide "
+    "nenhum veredito (o veredito é o da seção acima)."
+)
+
+
+def margem_de_variacao(contagens: list[Contagens], total_transcricoes: int) -> dict[str, float]:
+    """Amplitude (máx − mín) da taxa por Repetição, em pontos percentuais, por métrica."""
+    margens: dict[str, float] = {}
+    for atributo, _ in METRICAS_DA_MARGEM:
+        taxas = [100 * getattr(c, atributo) / total_transcricoes for c in contagens]
+        margens[atributo] = max(taxas) - min(taxas)
+    return margens
+
+
+def _pp(valor: float) -> str:
+    return f"{valor:.1f} pp"
+
+
+def _secao_margem(por_versao: dict[str, ResumoRodada], total_transcricoes: int) -> list[str]:
+    linhas = ["", "## Margem de variação da Reexecução", "", TEXTO_MARGEM, ""]
+    if not por_versao or total_transcricoes == 0:
+        linhas.append("n/d — nenhuma Rodada do experimento atual.")
+        return linhas
+    for versao in sorted(por_versao, key=_ordem_versao):
+        margens = margem_de_variacao(por_versao[versao].contagens_por_repeticao, total_transcricoes)
+        partes = ", ".join(f"{nome} {_pp(margens[atributo])}" for atributo, nome in METRICAS_DA_MARGEM)
+        linhas.append(f"- {versao}: {partes}")
+    return linhas
+
+
 def _percentual(numerador: int, denominador: int) -> str:
     if denominador == 0:
         return "n/d"
@@ -354,6 +394,7 @@ def renderizar(resumos: list[ResumoRodada], dataset: Dataset) -> str:
             )
 
     linhas.extend(_secao_veredito(por_versao))
+    linhas.extend(_secao_margem(por_versao, total_transcricoes))
     linhas.extend(_secao_mudancas(por_versao))
 
     linhas.append("")
