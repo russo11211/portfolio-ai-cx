@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car20-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "t13",
+  "repeticao": 2,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "```json\n{\n  \"rotulo\": \"suporte_tecnico\",\n  \"justificativa\": \"O aplicativo trava toda vez que tento fazer login\"\n}\n```",
+  "criado_em": "2026-10-01T01:34:00Z"
+}

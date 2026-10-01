@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car20-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "t06",
+  "repeticao": 3,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "```json\n{\n  \"rotulo\": \"duvida_fatura\",\n  \"justificativa\": \"Não entendi uma cobrança extra na fatura, pode me explicar o que é isso?\"\n}\n```",
+  "criado_em": "2026-10-01T01:34:26Z"
+}
