@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car20-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "t22",
+  "repeticao": 2,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "{\n  \"rotulo\": \"solicitacao_upgrade\",\n  \"justificativa\": \"Preciso de mais armazenamento, dá pra migrar para o plano avançado?\"\n}",
+  "criado_em": "2026-10-01T01:34:14Z"
+}

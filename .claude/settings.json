@@ -1,17 +1,4 @@
 {
-  "disableBundledSkills": true,
-  "disableClaudeAiConnectors": true,
-  "enabledPlugins": {
-    "linear@claude-plugins-official": false,
-    "figma@synced": false,
-    "codex@openai-codex": false,
-    "core-3d-animation@claude-design-skillstack": false,
-    "i-have-adhd@i-have-adhd": false,
-    "understand-anything@understand-anything": false
-  },
-  "claudeMdExcludes": [
-    "/home/caueantonacci/.claude/CLAUDE.md"
-  ],
   "permissions": {
     "deny": [
       "mcp__mcp-server-linkedin",
@@ -20,8 +7,21 @@
       "mcp__claude-in-chrome"
     ]
   },
+  "disableClaudeAiConnectors": true,
   "skillOverrides": {
     "_gstack-command": "off",
+    "anthropic-skills:built-in-browser": "off",
+    "anthropic-skills:chrome-browser": "off",
+    "anthropic-skills:computer-use": "off",
+    "anthropic-skills:deep-research": "off",
+    "anthropic-skills:docs": "off",
+    "anthropic-skills:docx": "off",
+    "anthropic-skills:import-memory": "off",
+    "anthropic-skills:morning": "off",
+    "anthropic-skills:pdf": "off",
+    "anthropic-skills:pptx": "off",
+    "anthropic-skills:skill-creator": "off",
+    "anthropic-skills:xlsx": "off",
     "archify": "off",
     "architecture": "off",
     "autonomous-system-auditor": "off",
@@ -168,5 +168,23 @@
     "venn": "off",
     "wiki-query": "off",
     "wiki-update": "off"
-  }
+  },
+  "disableBundledSkills": true,
+  "enabledPlugins": {
+    "claude-code-setup@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": false,
+    "codex@openai-codex": false,
+    "core-3d-animation@claude-design-skillstack": false,
+    "figma@synced": false,
+    "github@claude-plugins-official": false,
+    "i-have-adhd@i-have-adhd": false,
+    "linear@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": false,
+    "understand-anything@understand-anything": false,
+    "watch@claude-video": false
+  },
+  "claudeMdExcludes": [
+    "/home/*/.claude/CLAUDE.md"
+  ]
 }

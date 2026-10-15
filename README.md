@@ -1,19 +1,26 @@
 # portfolio-ai-cx
 
+Monorepo de portfólio: projetos pequenos de IA aplicada a Customer Experience (CX), cada
+um numa subpasta, construídos com uma esteira de estágios documentada (ideia → design →
+spec → tickets → ADR → implementação com TDD). O plano geral está em
+[`plano_portfolio_ai_solutions_consultant.md`](./plano_portfolio_ai_solutions_consultant.md).
+
+## Projetos
+
+| Projeto | Resumo |
+|---|---|
+| [`cx-prompt-lab/`](./cx-prompt-lab/) | Prompts versionados que classificam a intenção de chamadas de contact center, medidos por um eval determinístico com Replay offline das Chamadas gravadas. Rodadas reais em `claude-sonnet-4-5`: Violação de formato de 62,5% (v0) para 33,3% (v1), 72 Chamadas por versão; resultado exploratório, inconclusivo por efeito piso. |
+
+Os artefatos de cada estágio (ideia, design, spec, ADRs) ficam em [`docs/`](./docs/); o
+glossário do domínio, em [`CONTEXT.md`](./CONTEXT.md).
+
+## Como este repositório é trabalhado
+
 > Projeto **adotado** pela fábrica agêntica. O fluxo, as skills permitidas e a
 > convenção de artefatos estão em [`CLAUDE.md`](./CLAUDE.md) — leia antes de abrir
 > uma sessão.
 
-## Estado
-
-Repositório que já existia antes da fábrica. O harness e a árvore de artefatos foram
-instalados; o que já havia em disco **não** foi alterado.
-
-## O que é isto
-
-<!-- Uma frase do problema e uma do critério de sucesso, com número. -->
-
-## Por onde entrar
+### Por onde entrar
 
 - **Trabalho novo sobre este código** → Esteira 1, estágio 1: `/ideacao`.
 - **Mapear o que já existe contra os artefatos do ciclo** → `/edlc-adequacao`
@@ -22,11 +29,11 @@ instalados; o que já havia em disco **não** foi alterado.
   `understand-anything:understand`. Ver `ESTEIRAS.md` no skills-hub.
 
 ```bash
-cd /home/caueantonacci/GIT/portfolio-ai-cx
+cd portfolio-ai-cx
 claude
 ```
 
-## Mapa dos artefatos
+### Mapa dos artefatos
 
 | Caminho | Estágio | O que é |
 |---|---|---|
@@ -40,7 +47,7 @@ claude
 | `CHANGELOG.md`, `VERSION` | 11 | Produzidos pelo `/ship` |
 | `docs/retro/` | 12 | Retrospectivas |
 
-## Harness
+### Harness
 
 `.claude/settings.json` restringe as skills e os MCP visíveis neste projeto.
 O porquê de cada bloco está em `.claude/settings.json.comentado.md`.

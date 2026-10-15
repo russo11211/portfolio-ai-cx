@@ -1,0 +1,157 @@
+{
+  "rotulos_validos": [
+    "cancelamento",
+    "duvida_fatura",
+    "reclamacao",
+    "suporte_tecnico",
+    "elogio",
+    "solicitacao_upgrade"
+  ],
+  "regra_desempate": "Quando a Transcrição expressa mais de uma intenção, o Rótulo esperado é o da intenção verbalizada primeiro no texto; menções posteriores na mesma chamada são tratadas como contexto adicional e não alteram o rótulo esperado.",
+  "transcricoes": [
+    {
+      "id": "t01",
+      "texto": "Cliente: Quero cancelar minha assinatura agora, não uso mais o serviço.",
+      "rotulo_esperado": "cancelamento"
+    },
+    {
+      "id": "t02",
+      "texto": "Cliente: Por favor, encerrem meu plano no fim do mês, decidi parar de usar.",
+      "rotulo_esperado": "cancelamento"
+    },
+    {
+      "id": "t03",
+      "texto": "Cliente: Quero cancelar meu plano, mas antes queria entender por que a fatura veio tão alta.",
+      "rotulo_esperado": "cancelamento",
+      "intencao_dupla": true,
+      "observacao": "Também pede explicação sobre a fatura, mas a intenção verbalizada primeiro é o cancelamento; vale a regra de desempate."
+    },
+    {
+      "id": "t04",
+      "texto": "Cliente: Não sei se quero continuar com vocês, talvez seja melhor eu ver outras opções no mercado.",
+      "rotulo_esperado": "cancelamento",
+      "ambiguo": true,
+      "observacao": "Não usa a palavra 'cancelar', mas expressa intenção de encerrar o serviço; caso ambíguo proposital."
+    },
+    {
+      "id": "t05",
+      "texto": "Cliente: Por que minha fatura desse mês veio maior do que o normal?",
+      "rotulo_esperado": "duvida_fatura"
+    },
+    {
+      "id": "t06",
+      "texto": "Cliente: Não entendi uma cobrança extra na fatura, pode me explicar o que é isso?",
+      "rotulo_esperado": "duvida_fatura"
+    },
+    {
+      "id": "t07",
+      "texto": "Cliente: Minha fatura veio com um valor errado, e além disso queria elogiar o atendimento de ontem.",
+      "rotulo_esperado": "duvida_fatura",
+      "intencao_dupla": true,
+      "observacao": "Elogia o atendimento depois de perguntar sobre a fatura; a primeira intenção verbalizada é a dúvida sobre a fatura."
+    },
+    {
+      "id": "t08",
+      "texto": "Cliente: Essa cobrança aqui... não sei, parece estranha, será que está certo isso?",
+      "rotulo_esperado": "duvida_fatura",
+      "ambiguo": true,
+      "observacao": "Texto vago e hesitante, sem citar explicitamente 'fatura' ou 'cobrança indevida', mas o assunto é a cobrança."
+    },
+    {
+      "id": "t09",
+      "texto": "Cliente: Estou muito insatisfeito, o atendente anterior foi grosseiro comigo.",
+      "rotulo_esperado": "reclamacao"
+    },
+    {
+      "id": "t10",
+      "texto": "Cliente: Já é a terceira vez que ligo pelo mesmo problema e ninguém resolve, isso é um absurdo.",
+      "rotulo_esperado": "reclamacao"
+    },
+    {
+      "id": "t11",
+      "texto": "Cliente: Quero reclamar da demora no suporte técnico, e também queria saber se dá pra fazer upgrade do meu plano.",
+      "rotulo_esperado": "reclamacao",
+      "intencao_dupla": true,
+      "observacao": "Pergunta sobre upgrade vem depois da reclamação; a intenção verbalizada primeiro é a reclamação."
+    },
+    {
+      "id": "t12",
+      "texto": "Cliente: Não sei, o serviço tá meio estranho ultimamente, não sei se é vocês ou sou eu.",
+      "rotulo_esperado": "reclamacao",
+      "ambiguo": true,
+      "observacao": "Poderia soar como suporte técnico, mas o tom insatisfeito e a ausência de um problema técnico concreto apontam para reclamação."
+    },
+    {
+      "id": "t13",
+      "texto": "Cliente: O aplicativo trava toda vez que tento fazer login, pode me ajudar?",
+      "rotulo_esperado": "suporte_tecnico"
+    },
+    {
+      "id": "t14",
+      "texto": "Cliente: Não estou conseguindo redefinir minha senha, o link de recuperação não funciona.",
+      "rotulo_esperado": "suporte_tecnico"
+    },
+    {
+      "id": "t15",
+      "texto": "Cliente: O sistema está dando erro ao carregar meus dados, e de quebra queria elogiar a rapidez do chat de vocês.",
+      "rotulo_esperado": "suporte_tecnico",
+      "intencao_dupla": true,
+      "observacao": "O elogio ao chat vem depois de relatar o erro; a primeira intenção verbalizada é o problema técnico."
+    },
+    {
+      "id": "t16",
+      "texto": "Cliente: Alguma coisa não está funcionando direito, mas não sei explicar exatamente o quê.",
+      "rotulo_esperado": "suporte_tecnico",
+      "ambiguo": true,
+      "observacao": "Relato vago de mau funcionamento, sem detalhe técnico específico; ainda assim é um problema técnico, não uma reclamação de atendimento."
+    },
+    {
+      "id": "t17",
+      "texto": "Cliente: Só queria agradecer, o atendimento de vocês foi excelente hoje.",
+      "rotulo_esperado": "elogio"
+    },
+    {
+      "id": "t18",
+      "texto": "Cliente: Parabéns pela equipe, resolveram meu problema rapidinho, muito obrigado.",
+      "rotulo_esperado": "elogio"
+    },
+    {
+      "id": "t19",
+      "texto": "Cliente: Queria elogiar o suporte técnico de ontem, e aproveitando, será que dá pra eu fazer upgrade do meu plano?",
+      "rotulo_esperado": "elogio",
+      "intencao_dupla": true,
+      "observacao": "O pedido de upgrade vem depois do elogio; a primeira intenção verbalizada é o elogio."
+    },
+    {
+      "id": "t20",
+      "texto": "Cliente: Olha, não foi ruim dessa vez, acho que até que funcionou bem.",
+      "rotulo_esperado": "elogio",
+      "ambiguo": true,
+      "observacao": "Elogio discreto e indireto, sem palavras de agradecimento explícitas; caso ambíguo proposital."
+    },
+    {
+      "id": "t21",
+      "texto": "Cliente: Quero fazer upgrade do meu plano para o nível superior, como faço?",
+      "rotulo_esperado": "solicitacao_upgrade"
+    },
+    {
+      "id": "t22",
+      "texto": "Cliente: Preciso de mais armazenamento, dá pra migrar para o plano avançado?",
+      "rotulo_esperado": "solicitacao_upgrade"
+    },
+    {
+      "id": "t23",
+      "texto": "Cliente: Quero fazer upgrade do meu plano, e também queria saber por que minha fatura anterior veio diferente.",
+      "rotulo_esperado": "solicitacao_upgrade",
+      "intencao_dupla": true,
+      "observacao": "A dúvida sobre a fatura anterior vem depois do pedido de upgrade; a primeira intenção verbalizada é o upgrade."
+    },
+    {
+      "id": "t24",
+      "texto": "Cliente: Será que existe algo melhor pro que eu preciso? Não sei bem o que vocês têm disponível.",
+      "rotulo_esperado": "solicitacao_upgrade",
+      "ambiguo": true,
+      "observacao": "Não usa a palavra 'upgrade', mas busca uma opção melhor que o plano atual; caso ambíguo proposital."
+    }
+  ]
+}

@@ -4,3 +4,16 @@
 # artefatos de sessão
 .gstack/
 *.log
+
+# python (cx-prompt-lab)
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# artefatos locais de agentes/sessão — não versionar
+.scratch/
+.codex/
+.claude/worktrees/
+.env
+.env.*
