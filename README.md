@@ -14,6 +14,15 @@ spec → tickets → ADR → implementação com TDD). O plano geral está em
 Os artefatos de cada estágio (ideia, design, spec, ADRs) ficam em [`docs/`](./docs/); o
 glossário do domínio, em [`CONTEXT.md`](./CONTEXT.md).
 
+## Para quem está avaliando
+
+- **Leitura rápida:** o README do [`cx-prompt-lab/`](./cx-prompt-lab/README.md) abre com o
+  resultado, o veredito e a seção "Onde olhar", que liga cada competência a um arquivo.
+- **Conferir os números:** `cd cx-prompt-lab && python3 -m pytest -q && python3 -m cx_prompt_lab replay`
+  (Python 3.11+, só biblioteca padrão mais `pytest`; offline, sem chave de API).
+- **Conferir o processo:** ideia → design → spec → ADR → commits `feat(E8)`, todos em
+  [`docs/`](./docs/) e no `git log`.
+
 ## Como este repositório é trabalhado
 
 > Projeto **adotado** pela fábrica agêntica. O fluxo, as skills permitidas e a
@@ -42,7 +51,7 @@ claude
 | `CONTEXT.md` | 3 | Glossário — a linguagem ubíqua do domínio |
 | `docs/spec/` | 4 | Spec executável |
 | `docs/adr/` | 3 e 7 | Decisões arquiteturais congeladas |
-| `.scratch/<feature>/issues/` | 6 | Tickets tracer-bullet |
+| `.scratch/<feature>/issues/` | 6 | Tickets tracer-bullet (local, não versionado; os do `cx-prompt-lab` estão num Linear privado, e a tabela de tickets está copiada em `docs/spec/cx-prompt-lab.md` para ser lida no repo) |
 | `docs/qa/` | 9 | Relatórios de QA |
 | `CHANGELOG.md`, `VERSION` | 11 | Produzidos pelo `/ship` |
 | `docs/retro/` | 12 | Retrospectivas |
