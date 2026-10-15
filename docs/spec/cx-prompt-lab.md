@@ -1,7 +1,7 @@
 <!-- /autoplan restore point: "~/.gstack/projects/russo11211-portfolio-ai-cx/claude-mattpocock-skills-setup-96cf28-autoplan-restore-20260923-204713.md" -->
 <!-- /autoplan restore point: "~/.gstack/projects/russo11211-portfolio-ai-cx/claude-mattpocock-skills-setup-96cf28-autoplan-restore-20260923-133952.md" -->
 ## Implementation plan
-<!-- Cópia somente leitura. Fonte da verdade: https://linear.app/1bitpios/issue/CAR-8 (time Carreira) -->
+<!-- Cópia somente leitura. Fonte da verdade: CAR-8 (Linear privado, time Carreira) -->
 
 ## Problem Statement
 
@@ -867,20 +867,20 @@ Cada linha foi conferida com `get_issue` (com relações) depois da criação. T
 
 | Ticket | Issue | URL | Bloqueado por |
 |---|---|---|---|
-| T1: Spike do Gateway (CLIProxyAPI local) e decisão go/no-go | CAR-9 | https://linear.app/1bitpios/issue/CAR-9/t1-spike-do-gateway-cliproxyapi-local-e-decisao-gono-go | nenhum (pré-requisito humano: Plano B nomeado) |
-| T2: Rodada mínima com provider falso e Avaliador | CAR-10 | https://linear.app/1bitpios/issue/CAR-10/t2-rodada-minima-com-provider-falso-e-avaliador | nenhum |
-| T3: Gravação, manifesto e Replay | CAR-12 | https://linear.app/1bitpios/issue/CAR-12/t3-gravacao-manifesto-e-replay | CAR-10 (T2) |
-| T4: Repetições (mínimo 3) e aborto de Rodada | CAR-14 | https://linear.app/1bitpios/issue/CAR-14/t4-repeticoes-minimo-3-e-aborto-de-rodada | CAR-12 (T3) |
-| T5: Provider Gateway (CLIProxyAPI local) no formato Anthropic | CAR-13 | https://linear.app/1bitpios/issue/CAR-13/t5-provider-gateway-cliproxyapi-local-no-formato-anthropic | CAR-10 (T2), CAR-9 (T1) |
-| T6: Provider Anthropic, contrato entre providers e suíte offline | CAR-15 | https://linear.app/1bitpios/issue/CAR-15/t6-provider-anthropic-contrato-entre-providers-e-suite-offline | CAR-13 (T5) |
-| T7: Dataset de 20-30 Transcrições com validação | CAR-11 | https://linear.app/1bitpios/issue/CAR-11/t7-dataset-de-20-30-transcricoes-com-validacao | nenhum |
-| T8: Prompt v0, piloto e congelamento do Dataset | CAR-16 | https://linear.app/1bitpios/issue/CAR-16/t8-prompt-v0-piloto-e-congelamento-do-dataset | CAR-13 (T5), CAR-11 (T7) |
-| T9: Relatório: comando de Replay, tabela por versão e todas as Rodadas | CAR-17 | https://linear.app/1bitpios/issue/CAR-17/t9-relatorio-comando-de-replay-tabela-por-versao-e-todas-as-rodadas | CAR-12 (T3) |
-| T10: Veredito v0 × versão final e lista de Transcrições que mudaram | CAR-18 | https://linear.app/1bitpios/issue/CAR-18/t10-veredito-v0-versao-final-e-lista-de-transcricoes-que-mudaram | CAR-17 (T9), CAR-14 (T4) |
-| T11: Primeiro corte: v0 e v1 medidas ponta a ponta no Gateway (CLIProxyAPI local) | CAR-20 | https://linear.app/1bitpios/issue/CAR-20/t11-primeiro-corte-v0-e-v1-medidas-ponta-a-ponta-no-gateway | CAR-14 (T4), CAR-15 (T6), CAR-16 (T8), CAR-18 (T10) |
-| T12: Case study e README com a matriz "o que cada teste comprova" | CAR-21 | https://linear.app/1bitpios/issue/CAR-21/t12-case-study-e-readme-com-a-matriz-o-que-cada-teste-comprova | CAR-20 (T11) |
-| T13 (opcional): v2 como alvo | CAR-22 | https://linear.app/1bitpios/issue/CAR-22/t13-opcional-v2-como-alvo | CAR-20 (T11) |
-| T14: Margem de variação da Reexecução no Relatório | CAR-19 | https://linear.app/1bitpios/issue/CAR-19/t14-margem-de-variacao-da-reexecucao-no-relatorio | CAR-14 (T4), CAR-17 (T9) |
+| T1: Spike do Gateway (CLIProxyAPI local) e decisão go/no-go | CAR-9 | CAR-9 | nenhum (pré-requisito humano: Plano B nomeado) |
+| T2: Rodada mínima com provider falso e Avaliador | CAR-10 | CAR-10 | nenhum |
+| T3: Gravação, manifesto e Replay | CAR-12 | CAR-12 | CAR-10 (T2) |
+| T4: Repetições (mínimo 3) e aborto de Rodada | CAR-14 | CAR-14 | CAR-12 (T3) |
+| T5: Provider Gateway (CLIProxyAPI local) no formato Anthropic | CAR-13 | CAR-13 | CAR-10 (T2), CAR-9 (T1) |
+| T6: Provider Anthropic, contrato entre providers e suíte offline | CAR-15 | CAR-15 | CAR-13 (T5) |
+| T7: Dataset de 20-30 Transcrições com validação | CAR-11 | CAR-11 | nenhum |
+| T8: Prompt v0, piloto e congelamento do Dataset | CAR-16 | CAR-16 | CAR-13 (T5), CAR-11 (T7) |
+| T9: Relatório: comando de Replay, tabela por versão e todas as Rodadas | CAR-17 | CAR-17 | CAR-12 (T3) |
+| T10: Veredito v0 × versão final e lista de Transcrições que mudaram | CAR-18 | CAR-18 | CAR-17 (T9), CAR-14 (T4) |
+| T11: Primeiro corte: v0 e v1 medidas ponta a ponta no Gateway (CLIProxyAPI local) | CAR-20 | CAR-20 | CAR-14 (T4), CAR-15 (T6), CAR-16 (T8), CAR-18 (T10) |
+| T12: Case study e README com a matriz "o que cada teste comprova" | CAR-21 | CAR-21 | CAR-20 (T11) |
+| T13 (opcional): v2 como alvo | CAR-22 | CAR-22 | CAR-20 (T11) |
+| T14: Margem de variação da Reexecução no Relatório | CAR-19 | CAR-19 | CAR-14 (T4), CAR-17 (T9) |
 
 Notas de execução: o T14 é bloqueado por T4 e T9 (a margem é impressa no Relatório); o T1 depende de o humano nomear o Plano B (modelo e provedor) antes de começar; T1 e T11 não levam o label `ready-for-agent` porque dependem do humano e do Gateway (CLIProxyAPI local) rodando. Frentes paralelas que começam já: T1, T2 e T7. Caminho crítico: T2 → T3 → T9 → T10 → T11 → T12.
 

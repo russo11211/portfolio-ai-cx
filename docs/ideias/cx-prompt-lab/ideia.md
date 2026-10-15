@@ -70,7 +70,7 @@ estágio 7 — ver `arquitetura-llm-provider-notas.md`.)*
 6. **Interface web para rodar o eval + CI automatizado** — servem um objetivo diferente
    (visibilidade pública/LinkedIn, não evidência para conversa técnica com recrutador).
    Registrado como ideia futura separada em
-   [CAR-6](https://linear.app/1bitpios/issue/CAR-6/ideia-futura-cx-prompt-lab-demo-publica-interface-web-ci-automatizado),
+   CAR-6,
    com seu próprio ciclo de `/ideacao` quando for retomada.
 
 ## 6. Riscos e premissas    <!-- status: fechado -->
@@ -145,5 +145,5 @@ entrevista verbal não cobrem (dimensão 2).
 
 ## Fontes e anexos
 
-- Issue original: [CAR-1 — Fase 1 — CX Prompt Lab](https://linear.app/1bitpios/issue/CAR-1/fase-1-cx-prompt-lab-prompt-engineering-evals) (Linear, time Carreira). Conteúdo bruto trazido como ponto de partida, não como decisão fechada — a issue **será atualizada** ao final deste estágio com o que ficar decidido aqui.
+- Issue original: CAR-1 — Fase 1 — CX Prompt Lab (Linear, time Carreira). Conteúdo bruto trazido como ponto de partida, não como decisão fechada — a issue **será atualizada** ao final deste estágio com o que ficar decidido aqui.
 - `arquitetura-llm-provider-notas.md`: material bruto de arquitetura (provider abstraction, CLIProxyAPI + Anthropic) colado pelo usuário — insumo para a ADR do estágio 7, não decisão de ideia.

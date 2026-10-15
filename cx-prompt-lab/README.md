@@ -135,10 +135,9 @@ repositório para cada estágio:
 | Rodadas reais e conclusão | [`rodadas/`](rodadas/), [`RELATORIO.md`](RELATORIO.md) | Chamadas de 2026-10-01 (UTC) |
 
 Os tickets (T1–T14, CAR-9 a CAR-22) ficam num workspace **privado** do Linear, que quem
-lê o repositório não acessa (os links `linear.app` da spec não abrem para terceiros). Para a
-evidência ficar legível aqui, a tabela de tickets, os bloqueios entre eles e a matriz de
-cobertura história → ticket estão copiadas na seção "Cobertura e fechamento (E6)" da
-[spec](../docs/spec/cx-prompt-lab.md). Cada commit de código do E8 traz o módulo e os testes
+lê o repositório não acessa. Para a evidência ficar legível aqui, a tabela de tickets, os
+bloqueios entre eles e a matriz de cobertura história → ticket estão copiadas na seção
+"Cobertura e fechamento (E6)" da [spec](../docs/spec/cx-prompt-lab.md). Cada commit de código do E8 traz o módulo e os testes
 juntos (`git show --stat <commit>`).
 
 ## Metodologia do eval (como está implementada)
