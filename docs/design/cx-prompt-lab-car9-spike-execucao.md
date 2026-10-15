@@ -6,7 +6,7 @@ Registro de 2026-09-28. Gateway: **CLIProxyAPI v8.0.3**, binário Linux amd64, u
 
 ## 0. Escopo, decisões e estado
 
-- Diretório do spike: `~/cliproxyapi-spike/` (`~/cliproxyapi-spike/`), **fora do repositório**. Binário, config, token OAuth, logs e respostas reais ficaram ali.
+- Diretório do spike: `~/cliproxyapi-spike/`, **fora do repositório**. Binário, config, token OAuth, logs e respostas reais ficaram ali.
 - Método escolhido pelo humano: OAuth da assinatura Claude via `-claude-login`. O humano decidiu que a preocupação com os termos não imporia NO-GO automático. A seção 1 da ADR 0002 e a emenda da spec foram commitadas **antes** da instalação: `a3d57d50149515d53272471857c08a076ac9a51e`, 2026-09-28 19:31:41 −03:00. O risco 3 da spec permanece **ABERTO**; o GO técnico não prova conformidade com termos.
 - Plano B nomeado antes do spike: **Groq, Llama 3.3 70B**, camada gratuita. Limites de taxa: **NÃO VERIFICADOS**.
 - A decisão final do spike foi commitada em `7a8af9e5b30e8c011b9489ab6ec9844e387c88a2`, 2026-09-28 20:59:08 −03:00, **sem push**. Nenhum arquivo de prompt de produção existia na checagem após esse commit.
