@@ -51,7 +51,7 @@ claude
 | `CONTEXT.md` | 3 | Glossário — a linguagem ubíqua do domínio |
 | `docs/spec/` | 4 | Spec executável |
 | `docs/adr/` | 3 e 7 | Decisões arquiteturais congeladas |
-| `.scratch/<feature>/issues/` | 6 | Tickets tracer-bullet (local, não versionado; os do `cx-prompt-lab` estão no Linear, com a tabela copiada na spec) |
+| `.scratch/<feature>/issues/` | 6 | Tickets tracer-bullet (local, não versionado; os do `cx-prompt-lab` estão num Linear privado, e a tabela de tickets está copiada em `docs/spec/cx-prompt-lab.md` para ser lida no repo) |
 | `docs/qa/` | 9 | Relatórios de QA |
 | `CHANGELOG.md`, `VERSION` | 11 | Produzidos pelo `/ship` |
 | `docs/retro/` | 12 | Retrospectivas |
