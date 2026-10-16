@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car23-holdout-b-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "hb22",
+  "repeticao": 4,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "```json\n{\n  \"rotulo\": \"elogio\",\n  \"justificativa\": \"Faz dez anos que sou cliente e nunca tive problema, obrigado por isso.\"\n}\n```",
+  "criado_em": "2026-10-16T13:18:52Z"
+}

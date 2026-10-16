@@ -1,0 +1,187 @@
+{
+  "rotulos_validos": [
+    "cancelamento",
+    "duvida_fatura",
+    "reclamacao",
+    "suporte_tecnico",
+    "elogio",
+    "solicitacao_upgrade"
+  ],
+  "regra_desempate": "Quando a Transcrição expressa mais de uma intenção, o Rótulo esperado é o da intenção verbalizada primeiro no texto; menções posteriores na mesma chamada são tratadas como contexto adicional e não alteram o rótulo esperado.",
+  "transcricoes": [
+    {
+      "id": "hb01",
+      "texto": "Cliente: Gostaria de solicitar o cancelamento da minha conta, por favor confirmem por e-mail.",
+      "rotulo_esperado": "cancelamento"
+    },
+    {
+      "id": "hb02",
+      "texto": "Cliente: Não preciso mais da segunda linha que contratei para minha filha, podem desligar.",
+      "rotulo_esperado": "cancelamento"
+    },
+    {
+      "id": "hb03",
+      "texto": "Agente: Obrigado por aguardar. Cliente: Então, eu liguei para cancelar a assinatura premium mesmo, não quero outra oferta.",
+      "rotulo_esperado": "cancelamento"
+    },
+    {
+      "id": "hb04",
+      "texto": "Cliente: Quero cancelar meu plano de dados, e também preciso reclamar que fiquei duas horas esperando na fila para conseguir falar com alguém.",
+      "rotulo_esperado": "cancelamento",
+      "intencao_dupla": true,
+      "observacao": "A reclamação da fila vem depois do pedido de cancelamento; vale a regra de desempate."
+    },
+    {
+      "id": "hb05",
+      "texto": "Cliente: Vocês podem me dizer qual é a multa se eu sair antes do fim do contrato? Estou considerando mudar de operadora.",
+      "rotulo_esperado": "cancelamento",
+      "ambiguo": true,
+      "observacao": "Pergunta sobre multa, mas o motivo declarado é sair da operadora."
+    },
+    {
+      "id": "hb06",
+      "texto": "Cliente: Não reconheço esses minutos de ligação internacional que aparecem no detalhamento da conta.",
+      "rotulo_esperado": "duvida_fatura"
+    },
+    {
+      "id": "hb07",
+      "texto": "Cliente: Eu tinha um desconto de fidelidade e ele sumiu da fatura, o que aconteceu?",
+      "rotulo_esperado": "duvida_fatura"
+    },
+    {
+      "id": "hb08",
+      "texto": "Cliente: Queria entender como funciona o cálculo proporcional que veio na primeira fatura.",
+      "rotulo_esperado": "duvida_fatura"
+    },
+    {
+      "id": "hb09",
+      "texto": "Cliente: Minha fatura veio com juros mesmo eu tendo pago em dia, e por favor, quero aumentar a velocidade da minha internet.",
+      "rotulo_esperado": "duvida_fatura",
+      "intencao_dupla": true,
+      "observacao": "O pedido de mais velocidade vem depois da dúvida sobre os juros; a primeira intenção verbalizada é a dúvida sobre a fatura."
+    },
+    {
+      "id": "hb10",
+      "texto": "Cliente: Recebi uma mensagem dizendo que tenho um valor em aberto, mas eu acho que já paguei tudo, não sei.",
+      "rotulo_esperado": "duvida_fatura",
+      "ambiguo": true,
+      "observacao": "Hesitante e sem citar a fatura pelo nome; o assunto é um débito cobrado."
+    },
+    {
+      "id": "hb11",
+      "texto": "Cliente: Fui transferido cinco vezes entre setores e ninguém soube me responder, que falta de respeito.",
+      "rotulo_esperado": "reclamacao"
+    },
+    {
+      "id": "hb12",
+      "texto": "Cliente: O vendedor me prometeu um valor e o contrato veio com outro, me sinto enganado.",
+      "rotulo_esperado": "reclamacao"
+    },
+    {
+      "id": "hb13",
+      "texto": "Cliente: Vocês mudaram as condições do plano sem me avisar e isso é inaceitável.",
+      "rotulo_esperado": "reclamacao"
+    },
+    {
+      "id": "hb14",
+      "texto": "Cliente: Que atendimento péssimo o da última ligação, a atendente desligou na minha cara, e aproveitando quero cancelar o pacote de canais extras.",
+      "rotulo_esperado": "reclamacao",
+      "intencao_dupla": true,
+      "observacao": "O cancelamento vem depois da reclamação; a primeira intenção verbalizada é a reclamação."
+    },
+    {
+      "id": "hb15",
+      "texto": "Cliente: Toda vez é a mesma coisa com vocês, viu.",
+      "rotulo_esperado": "reclamacao",
+      "ambiguo": true,
+      "observacao": "Insatisfação genérica, sem dizer qual é o problema."
+    },
+    {
+      "id": "hb16",
+      "texto": "Cliente: Não consigo configurar o e-mail corporativo no meu notebook, dá erro de autenticação.",
+      "rotulo_esperado": "suporte_tecnico"
+    },
+    {
+      "id": "hb17",
+      "texto": "Cliente: O decodificador reinicia sozinho várias vezes por dia.",
+      "rotulo_esperado": "suporte_tecnico"
+    },
+    {
+      "id": "hb18",
+      "texto": "Cliente: A chamada de vídeo pelo aplicativo de vocês fica travando e o áudio some.",
+      "rotulo_esperado": "suporte_tecnico"
+    },
+    {
+      "id": "hb19",
+      "texto": "Cliente: Meu chip parou de funcionar depois da troca de aparelho, e queria agradecer à atendente do chat que tentou me ajudar mais cedo.",
+      "rotulo_esperado": "suporte_tecnico",
+      "intencao_dupla": true,
+      "observacao": "O agradecimento vem depois do problema com o chip; a primeira intenção verbalizada é o suporte."
+    },
+    {
+      "id": "hb20",
+      "texto": "Cliente: Tá tudo muito lento aqui, não sei se é o celular ou a rede.",
+      "rotulo_esperado": "suporte_tecnico",
+      "ambiguo": true,
+      "observacao": "Lentidão é um sintoma técnico concreto, ainda que o cliente não saiba a causa."
+    },
+    {
+      "id": "hb21",
+      "texto": "Cliente: Parabéns pelo atendimento no chat, a pessoa resolveu tudo em poucos minutos.",
+      "rotulo_esperado": "elogio"
+    },
+    {
+      "id": "hb22",
+      "texto": "Cliente: Faz dez anos que sou cliente e nunca tive problema, obrigado por isso.",
+      "rotulo_esperado": "elogio"
+    },
+    {
+      "id": "hb23",
+      "texto": "Agente: Em que posso ajudar? Cliente: Nada de problema hoje, só quero elogiar o rapaz da loja que me ajudou a escolher o aparelho.",
+      "rotulo_esperado": "elogio"
+    },
+    {
+      "id": "hb24",
+      "texto": "Cliente: Queria agradecer pela rapidez no reparo da rede, e também tirar uma dúvida sobre um valor que apareceu na minha conta.",
+      "rotulo_esperado": "elogio",
+      "intencao_dupla": true,
+      "observacao": "A dúvida sobre o valor vem depois do agradecimento; a primeira intenção verbalizada é o elogio."
+    },
+    {
+      "id": "hb25",
+      "texto": "Cliente: É, até que dessa vez vocês me surpreenderam.",
+      "rotulo_esperado": "elogio",
+      "ambiguo": true,
+      "observacao": "Elogio discreto e indireto, sem agradecimento explícito."
+    },
+    {
+      "id": "hb26",
+      "texto": "Cliente: Gostaria de contratar o pacote com mais velocidade que vi no site de vocês.",
+      "rotulo_esperado": "solicitacao_upgrade"
+    },
+    {
+      "id": "hb27",
+      "texto": "Cliente: Dá para eu trocar meu plano controle por um pós-pago com mais benefícios?",
+      "rotulo_esperado": "solicitacao_upgrade"
+    },
+    {
+      "id": "hb28",
+      "texto": "Cliente: Quero adicionar mais linhas e migrar para o plano família maior.",
+      "rotulo_esperado": "solicitacao_upgrade"
+    },
+    {
+      "id": "hb29",
+      "texto": "Cliente: Quero subir para o plano de 1 giga, e também reclamar que o técnico da última instalação sujou minha sala toda.",
+      "rotulo_esperado": "solicitacao_upgrade",
+      "intencao_dupla": true,
+      "observacao": "A reclamação vem depois do pedido de upgrade; a primeira intenção verbalizada é o upgrade."
+    },
+    {
+      "id": "hb30",
+      "texto": "Cliente: Vocês têm alguma coisa mais completa? O meu está meio básico demais.",
+      "rotulo_esperado": "solicitacao_upgrade",
+      "ambiguo": true,
+      "observacao": "Não usa a palavra 'upgrade', mas busca uma opção superior ao plano atual."
+    }
+  ]
+}

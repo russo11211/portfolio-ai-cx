@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car23-holdout-a-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "ha04",
+  "repeticao": 1,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "{\n  \"rotulo\": \"cancelamento\",\n  \"justificativa\": \"Quero cancelar o serviço de streaming que vem junto\"\n}",
+  "criado_em": "2026-10-16T13:03:23Z"
+}

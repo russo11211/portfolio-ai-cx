@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car23-holdout-a-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "ha18",
+  "repeticao": 1,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "```json\n{\n  \"rotulo\": \"suporte_tecnico\",\n  \"justificativa\": \"A TV mostra a mensagem 'sem sinal' em todos os canais desde que choveu.\"\n}\n```",
+  "criado_em": "2026-10-16T13:03:45Z"
+}

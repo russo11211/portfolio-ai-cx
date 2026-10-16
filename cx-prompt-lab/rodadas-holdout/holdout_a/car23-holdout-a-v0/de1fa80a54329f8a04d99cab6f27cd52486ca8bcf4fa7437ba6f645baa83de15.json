@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car23-holdout-a-v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "transcricao_id": "ha12",
+  "repeticao": 2,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "```json\n{\n  \"rotulo\": \"reclamacao\",\n  \"justificativa\": \"Prometeram retorno em 24 horas e já se passou uma semana sem ninguém me ligar, estou revoltado.\"\n}\n```",
+  "criado_em": "2026-10-16T13:04:26Z"
+}
