@@ -8,6 +8,7 @@ from collections.abc import Callable
 from pathlib import Path
 from uuid import uuid4
 
+from cx_prompt_lab import confirmatorio
 from cx_prompt_lab.dataset import Dataset, RecusaDataset, carregar
 from cx_prompt_lab.executor import AbortoRodada, rodar
 from cx_prompt_lab.gravacao import (
@@ -23,6 +24,11 @@ from cx_prompt_lab.relatorio import gerar_relatorio
 
 BANNER_REPLAY = "REPLAY (offline, nenhum modelo chamado)"
 BANNER_REEXECUCAO = "REEXECUÇÃO (ao vivo)"
+BANNER_CONFIRMAR = "CONFIRMATÓRIO (offline, nenhum modelo chamado)"
+SPLITS_PREREGISTRADOS = (
+    ("holdout_a", "rodadas-holdout/holdout_a", "dataset/holdout_a.json"),
+    ("holdout_b", "rodadas-holdout/holdout_b", "dataset/holdout_b.json"),
+)
 
 
 def _prompt_texto_por_versao(diretorio_prompts: Path) -> Callable[[str], str]:
@@ -48,6 +54,26 @@ def _cmd_replay(args: argparse.Namespace) -> int:
         prompt_texto_por_versao=_prompt_texto_por_versao(Path(args.prompts)),
     )
     print(texto)
+    return 0
+
+
+def _cmd_confirmar(args: argparse.Namespace) -> int:
+    print(BANNER_CONFIRMAR)
+    try:
+        splits = [
+            confirmatorio.Split(nome=nome, diretorio_rodadas=Path(rodadas), dataset=carregar(Path(dataset)))
+            for nome, rodadas, dataset in (args.splits or SPLITS_PREREGISTRADOS)
+        ]
+        analise = confirmatorio.analisar(
+            splits=splits,
+            base=args.base,
+            candidata=args.candidata,
+            prompt_texto_por_versao=_prompt_texto_por_versao(Path(args.prompts)),
+        )
+    except (RecusaDataset, confirmatorio.RecusaConfirmatorio) as erro:
+        print(str(erro), file=sys.stderr)
+        return 1
+    print(confirmatorio.renderizar(analise))
     return 0
 
 
@@ -192,6 +218,26 @@ def construir_parser() -> argparse.ArgumentParser:
         help="Diretório com os arquivos de prompt, um por versão (default: prompts/).",
     )
     replay.set_defaults(func=_cmd_replay)
+
+    confirmar = subparsers.add_parser(
+        "confirmar",
+        help=(
+            "Experimento confirmatório pré-registrado (holdout): teste do sinal e bootstrap "
+            "por Transcrição, offline, a partir das Chamadas gravadas."
+        ),
+    )
+    confirmar.add_argument("--base", default="v0", help="Versão de referência (default: v0).")
+    confirmar.add_argument("--candidata", default="v1", help="Versão candidata (default: v1).")
+    confirmar.add_argument("--prompts", default="prompts", help="Diretório dos prompts.")
+    confirmar.add_argument(
+        "--split",
+        dest="splits",
+        nargs=3,
+        action="append",
+        metavar=("NOME", "RODADAS", "DATASET"),
+        help="Split do holdout (repetível). Default: os dois splits pré-registrados.",
+    )
+    confirmar.set_defaults(func=_cmd_confirmar)
 
     reexecutar = subparsers.add_parser(
         "reexecutar",
