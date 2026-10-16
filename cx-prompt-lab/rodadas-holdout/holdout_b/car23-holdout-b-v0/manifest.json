@@ -1,0 +1,17 @@
+{
+  "versao_esquema": 2,
+  "rodada_id": "car23-holdout-b-v0",
+  "versao_prompt": "v0",
+  "hash_prompt": "db30ff2e213224deaf440dc588ea6a0953889fb0ebcaa17da5fd16e47355f4fb",
+  "hash_dataset": "e6d64b422e3d5329d9c197aff5a4fa4c91e9a9ed3e1aac2080fca4fde69054c5",
+  "parametros_efetivos": {
+    "provider": "gateway",
+    "modelo_pedido": "claude-sonnet-4-5-20250929",
+    "temperature_pedida": 0.0,
+    "max_tokens": 256
+  },
+  "numero_esperado_chamadas": 150,
+  "estado": "completa",
+  "ferramenta_versao": "0.1.0",
+  "avaliador_versao": "0.1.0"
+}

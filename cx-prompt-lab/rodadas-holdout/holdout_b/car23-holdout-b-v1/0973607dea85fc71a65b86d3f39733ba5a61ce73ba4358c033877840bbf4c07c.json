@@ -1,0 +1,12 @@
+{
+  "rodada_id": "car23-holdout-b-v1",
+  "hash_prompt": "94ea40f871ac7d45e5896fb9da50e598d9d2c4266ea0af97e0231ca88cfd4419",
+  "transcricao_id": "hb17",
+  "repeticao": 2,
+  "modelo": "claude-sonnet-4-5-20250929",
+  "motivo_parada": "fim_normal",
+  "temperatura": null,
+  "max_tokens": 256,
+  "resposta": "```json\n{\n  \"rotulo\": \"suporte_tecnico\",\n  \"justificativa\": \"O decodificador reinicia sozinho várias vezes por dia.\"\n}\n```",
+  "criado_em": "2026-10-16T13:12:55Z"
+}

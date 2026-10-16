@@ -137,3 +137,13 @@ ela não decide nada com Alucinação no piso.
   independente dos prompts, mas não de quem escreve Transcrições.
 - Generalização: a conclusão vale para esta tarefa (classificar intenção com saída JSON estrita),
   não para "prompts em geral".
+
+## Registro de execução (2026-10-16, depois das Chamadas)
+
+Seção acrescentada depois da execução; nada acima foi alterado. As 4 Rodadas rodaram na ordem
+pré-registrada (a-v0, a-v1, b-v1, b-v0), entre 2026-10-16T13:03:18Z e 13:19:52Z, 150 Chamadas
+cada, nenhuma abortada, nenhuma refeita, todas com `stop_reason` normal e o mesmo modelo
+devolvido (`claude-sonnet-4-5-20250929`). Sem desvios do protocolo. Resultado na métrica
+primária: v0 75,7% (227/300), v1 55,7% (167/300), diferença −20,0 pp (IC 95% −29,3 a −11,0 pp),
+teste do sinal 33 × 9 com 18 empates, p = 2,7 × 10⁻⁴ → regra 1: **melhora confirmada**.
+Números completos em `cx-prompt-lab/RELATORIO.md` e no README do projeto.

@@ -9,7 +9,7 @@ spec → tickets → ADR → implementação com TDD). O plano geral está em
 
 | Projeto | Resumo |
 |---|---|
-| [`cx-prompt-lab/`](./cx-prompt-lab/) | Prompts versionados que classificam a intenção de chamadas de contact center, medidos por um eval determinístico com Replay offline das Chamadas gravadas. Rodadas reais em `claude-sonnet-4-5`: Violação de formato de 62,5% (v0) para 33,3% (v1), 72 Chamadas por versão; resultado exploratório, inconclusivo por efeito piso. |
+| [`cx-prompt-lab/`](./cx-prompt-lab/) | Prompts versionados que classificam a intenção de chamadas de contact center, medidos por um eval determinístico com Replay offline das Chamadas gravadas. Experimento pré-registrado num holdout de 60 Transcrições fictícias (`claude-sonnet-4-5`, 300 Chamadas por versão): Violação de formato de 75,7% (v0) para 55,7% (v1), −20 pp (IC 95% −29 a −11 pp), teste do sinal p = 0,00027; melhora confirmada. A medição exploratória anterior (CAR-20) ficou inconclusiva por efeito piso. |
 
 Os artefatos de cada estágio (ideia, design, spec, ADRs) ficam em [`docs/`](./docs/); o
 glossário do domínio, em [`CONTEXT.md`](./CONTEXT.md).
